@@ -23,7 +23,13 @@ async function createPhoto(formData: FormData) {
     const parsed = photoSchema.safeParse(raw)
     if (!parsed.success) return
 
-    await prisma.photoReport.create({ data: parsed.data })
+    await prisma.photoReport.create({
+        data: {
+            imageUrl: parsed.data.url,
+            title: parsed.data.title || null,
+        },
+    })
+
     revalidatePath("/gallery")
     revalidatePath("/admin/gallery")
 }
