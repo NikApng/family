@@ -26,7 +26,8 @@ async function createPhoto(formData: FormData) {
     await prisma.photoReport.create({
         data: {
             imageUrl: parsed.data.url,
-            title: parsed.data.title || null,
+            title: parsed.data.title?.trim() || "",
+
         },
     })
 
