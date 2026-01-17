@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+:root {
+    --bg: 246 242 236;
+    --card: 255 255 255;
+    --text: 28 28 30;
+    --muted: 112 114 117;
+    --border: 220 223 226;
+    --primary: 43 94 75;
+    --primaryText: 255 255 255;
+    --accent: 238 227 213;
+}
