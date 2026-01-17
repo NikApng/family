@@ -232,13 +232,10 @@ export default async function HomePage() {
   return (
       <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 text-gray-900">
         <section className="relative overflow-hidden border-b border-indigo-100">
-          <div className="pointer-events-none absolute inset-0 -z-10">
-            <Image
-                src="/images/img_1.png"
-                alt=""
-                fill
-                className="object-cover opacity-20 blur-sm"
-            />
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-40 left-1/2 h-[560px] w-[560px] -translate-x-1/2 rounded-full bg-indigo-300/25 blur-3xl" />
+            <div className="absolute -bottom-56 left-12 h-[520px] w-[520px] rounded-full bg-rose-200/35 blur-3xl" />
+            <div className="absolute -bottom-64 right-10 h-[520px] w-[520px] rounded-full bg-amber-200/30 blur-3xl" />
           </div>
 
           <div className="relative mx-auto w-full max-w-6xl px-4 py-14 md:py-20">
