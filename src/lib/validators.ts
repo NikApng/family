@@ -16,6 +16,6 @@ export const eventSchema = z.object({
 
 
 export const photoSchema = z.object({
-    title: z.string().min(1).optional().or(z.literal("")),
     url: z.string().url(),
+    title: z.string().optional().or(z.literal("")),
 })
