@@ -1,26 +1,42 @@
+import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 
-type Params = { params: { id: string } }
+type Ctx = { params: Promise<{ id: string }> }
 
-export async function GET(_: Request, { params }: Params) {
-  const item = await prisma.specialist.findUnique({ where: { id: params.id } })
-  if (!item) return new Response("Not found", { status: 404 })
+function toId(value: string) {
+  return String(value ?? "").trim()
+}
+
+export async function GET(_: NextRequest, { params }: Ctx) {
+  const { id: rawId } = await params
+  const id = toId(rawId)
+
+  if (!id) return new Response("Bad Request", { status: 400 })
+
+  const item = await prisma.specialist.findUnique({ where: { id } })
+  if (!item) return new Response("Not Found", { status: 404 })
+
   return Response.json(item)
 }
 
-export async function PATCH(req: Request, { params }: Params) {
+export async function PUT(req: NextRequest, { params }: Ctx) {
+  const { id: rawId } = await params
+  const id = toId(rawId)
+
+  if (!id) return new Response("Bad Request", { status: 400 })
+
   const body = await req.json()
 
   const updated = await prisma.specialist.update({
-    where: { id: params.id },
+    where: { id },
     data: {
-      slug: body.slug,
-      badge: body.badge,
-      badgeTone: body.badgeTone,
-      role: body.role,
-      name: body.name,
-      excerpt: body.excerpt,
-      bio: body.bio,
+      slug: String(body.slug ?? "").trim(),
+      badge: String(body.badge ?? "").trim(),
+      badgeTone: String(body.badgeTone ?? "").trim(),
+      role: String(body.role ?? "").trim(),
+      name: String(body.name ?? "").trim(),
+      excerpt: String(body.excerpt ?? "").trim(),
+      bio: String(body.bio ?? "").trim(),
       isPublished: Boolean(body.isPublished),
       sortOrder: Number(body.sortOrder ?? 0),
     },
@@ -29,7 +45,13 @@ export async function PATCH(req: Request, { params }: Params) {
   return Response.json(updated)
 }
 
-export async function DELETE(_: Request, { params }: Params) {
-  await prisma.specialist.delete({ where: { id: params.id } })
+export async function DELETE(_: NextRequest, { params }: Ctx) {
+  const { id: rawId } = await params
+  const id = toId(rawId)
+
+  if (!id) return new Response("Bad Request", { status: 400 })
+
+  await prisma.specialist.delete({ where: { id } })
+
   return new Response(null, { status: 204 })
 }
