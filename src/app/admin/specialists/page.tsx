@@ -1,0 +1,106 @@
+import Link from "next/link"
+import { prisma } from "@/lib/prisma"
+import { revalidatePath } from "next/cache"
+
+async function togglePublish(formData: FormData) {
+  "use server"
+
+  const id = String(formData.get("id") ?? "")
+  if (!id) return
+
+  const current = await prisma.specialist.findUnique({ where: { id } })
+  if (!current) return
+
+  await prisma.specialist.update({
+    where: { id },
+    data: { isPublished: !current.isPublished },
+  })
+
+  revalidatePath("/admin/specialists")
+  revalidatePath("/")
+}
+
+async function removeSpecialist(formData: FormData) {
+  "use server"
+
+  const id = String(formData.get("id") ?? "")
+  if (!id) return
+
+  await prisma.specialist.delete({ where: { id } })
+
+  revalidatePath("/admin/specialists")
+  revalidatePath("/")
+}
+
+export default async function AdminSpecialistsPage() {
+  const items = await prisma.specialist.findMany({
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+  })
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Специалисты</h1>
+          <p className="mt-1 text-sm text-gray-600">Список специалистов на главной и их страницы.</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/specialists/new"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Добавить специалиста
+          </Link>
+        </div>
+      </div>
+
+      <div className="mt-6 overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
+        <div className="grid grid-cols-12 gap-3 border-b border-indigo-100 px-4 py-3 text-xs font-semibold text-gray-600">
+          <div className="col-span-4">Имя</div>
+          <div className="col-span-3">Роль</div>
+          <div className="col-span-2">Slug</div>
+          <div className="col-span-1">Публ.</div>
+          <div className="col-span-2 text-right">Действия</div>
+        </div>
+
+        {items.map((x) => (
+          <div key={x.id} className="grid grid-cols-12 gap-3 px-4 py-3 text-sm text-gray-800">
+            <div className="col-span-4 font-semibold text-gray-900">
+              <Link href={`/specialists/${x.slug}`} className="hover:underline">
+                {x.name}
+              </Link>
+              <div className="mt-1 text-xs text-gray-500">{x.badge}</div>
+            </div>
+
+            <div className="col-span-3">{x.role}</div>
+            <div className="col-span-2 text-gray-600">{x.slug}</div>
+            <div className="col-span-1">{x.isPublished ? "Да" : "Нет"}</div>
+
+            <div className="col-span-2 flex justify-end gap-2">
+              <form action={togglePublish}>
+                <input type="hidden" name="id" value={x.id} />
+                <button
+                  className="inline-flex h-9 items-center justify-center rounded-md border border-indigo-100 bg-white px-3 text-xs font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"
+                >
+                  {x.isPublished ? "Снять" : "Опубликовать"}
+                </button>
+              </form>
+
+              <form action={removeSpecialist}>
+                <input type="hidden" name="id" value={x.id} />
+                <button className="inline-flex h-9 items-center justify-center rounded-md border border-rose-100 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:border-rose-200">
+                  Удалить
+                </button>
+              </form>
+            </div>
+          </div>
+        ))}
+
+        {!items.length ? (
+          <div className="px-4 py-10 text-center text-sm text-gray-600">Пока пусто</div>
+        ) : null}
+      </div>
+    </div>
+  )
+}

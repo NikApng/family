@@ -8,8 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-
-
 model BookingRequest {
   id        String   @id @default(cuid())
   name      String
@@ -34,4 +32,19 @@ model PhotoReport {
   title     String
   imageUrl  String
   createdAt DateTime @default(now())
+}
+
+model Specialist {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  badge       String
+  badgeTone   String
+  role        String
+  name        String
+  excerpt     String
+  bio         String
+  isPublished Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
