@@ -71,7 +71,7 @@ export function SiteFooter() {
                 <div
                     className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-indigo-100 pt-6 text-xs text-gray-500 md:flex-row md:items-center">
                     <div>
-                        © {new Date().getFullYear()} Про Семью, Про Единство
+                        © {new Date().getFullYear()} "АНО" Про Семью, Про Единство
                     </div>
 
                     <div className="max-w-md leading-relaxed">

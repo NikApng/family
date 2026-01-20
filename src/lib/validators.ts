@@ -16,6 +16,16 @@ export const eventSchema = z.object({
 
 
 export const photoSchema = z.object({
-    url: z.string().url(),
-    title: z.string().optional().or(z.literal("")),
+  title: z.string().trim().min(1),
+  imageUrl: z
+    .string()
+    .trim()
+    .refine(
+      (v) =>
+        v.startsWith("http://") ||
+        v.startsWith("https://") ||
+        v.startsWith("/uploads/") ||
+        v.startsWith("/images/"),
+      "Укажи корректный URL: https://... или /uploads/... или /images/..."
+    ),
 })

@@ -1,28 +1,30 @@
 import { prisma } from "@/lib/prisma"
-import { Section } from "@/components/Section"
 
 export default async function EventsPage() {
-    const events = await prisma.event.findMany({ orderBy: { date: "asc" } })
+  const items = await prisma.event.findMany({
+    orderBy: { date: "asc" },
+    where: { date: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+  })
 
-    return (
-        <Section title="Афиша мероприятий" subtitle="Встречи и события организации.">
-            <div className="grid gap-4 md:grid-cols-2">
-                {events.map((e) => (
-                    <div key={e.id} className="rounded-2xl border bg-white p-6">
-                        <div className="text-sm text-muted-foreground">
-                            {new Intl.DateTimeFormat("ru-RU", { dateStyle: "full", timeStyle: "short" }).format(e.date)}
-                        </div>
-                        <div className="mt-1 text-xl font-semibold">{e.title}</div>
-                        <div className="mt-2 text-sm text-muted-foreground whitespace-pre-wrap">{e.description}</div>
-                        {e.place ? <div className="mt-4 text-sm">Место: {e.place}</div> : null}
-                    </div>
-                ))}
-                {!events.length ? (
-                    <div className="rounded-2xl border bg-white p-6 text-sm text-muted-foreground">
-                        Пока нет опубликованных мероприятий.
-                    </div>
-                ) : null}
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4 py-10">
+      <h1 className="text-3xl font-semibold text-gray-900">Афиша</h1>
+      <div className="mt-2 text-sm text-gray-600">Ближайшие встречи и события.</div>
+
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        {items.map((e) => (
+          <div key={e.id} className="rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm">
+            <div className="text-xs font-semibold text-gray-600">
+              {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(e.date)}
+              {e.place ? ` • ${e.place}` : ""}
             </div>
-        </Section>
-    )
+            <div className="mt-2 text-lg font-semibold text-gray-900">{e.title}</div>
+            <div className="mt-2 text-sm text-gray-700">{e.description}</div>
+          </div>
+        ))}
+
+        {!items.length ? <div className="text-sm text-gray-600">Пока нет ближайших событий.</div> : null}
+      </div>
+    </div>
+  )
 }
