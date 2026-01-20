@@ -1,5 +1,5 @@
 import { Section } from "@/components/Section"
-import AdminGalleryEditClient from "./ui/AdminGalleryEditClient"
+import AdminGalleryEditClient from "../ui/AdminGalleryEditClient"
 
 type Params = Promise<{ id: string | string[] }>
 
