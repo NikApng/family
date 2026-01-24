@@ -9,7 +9,7 @@ const nav = [
   { href: "/#what", label: "Что мы делаем" },
   { href: "/#specialists", label: "Специалисты" },
   { href: "/#reviews", label: "Отзывы" },
-  { href: "/services/online", label: "Услуги" },
+  { href: "/services", label: "Услуги" },
   { href: "/events", label: "Афиша" },
   { href: "/gallery", label: "Фотоотчёты" },
   { href: "/contacts", label: "Контакты" },

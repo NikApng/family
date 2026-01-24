@@ -37,3 +37,19 @@ export const photoSchema = z.object({
   imageUrl: z.string().trim().refine((v) => isValidImageUrl(v), imageUrlMessage),
 })
 
+export const serviceSchema = z.object({
+  slug: z.string().min(1),
+  title: z.string().min(1),
+  intro: z.string().min(1),
+  sortOrder: z.coerce.number().int().optional().default(0),
+  isPublished: z.boolean().optional().default(true),
+  blocks: z
+    .array(
+      z.object({
+        title: z.string().optional().or(z.literal("")),
+        text: z.string().optional().or(z.literal("")),
+      }),
+    )
+    .optional()
+    .default([]),
+})
