@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { href: "/admin/specialists", label: "Специалисты" },
   { href: "/admin/events", label: "Афиша" },
   { href: "/admin/gallery", label: "Фотоотчёты" },
+  { href: "/admin/texts", label: "Тексты" },
 ]
 
 function isActive(pathname: string, href: string) {

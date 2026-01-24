@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
+import UploadPhotoClient from "../../gallery/UploadPhotoClient"
 
 type EventItem = {
   id: string
@@ -9,6 +10,7 @@ type EventItem = {
   description: string
   date: string
   place: string | null
+  imageUrl: string | null
   createdAt: string
   updatedAt: string
 }
@@ -18,10 +20,28 @@ type FormState = {
   description: string
   date: string
   place: string
+  imageUrl: string
 }
 
 function safeText(v: unknown) {
   return String(v ?? "").trim()
+}
+
+function isValidImageUrl(value: string) {
+  const v = safeText(value)
+  if (!v) return false
+
+  if (v.startsWith("/uploads/")) return true
+  if (v.startsWith("/images/")) return true
+  if (v.startsWith("http://")) return true
+  if (v.startsWith("https://")) return true
+
+  return false
+}
+
+function safeImageSrc(value: string | null) {
+  const v = safeText(value)
+  return isValidImageUrl(v) ? v : "/images/image.png"
 }
 
 async function apiJson<T>(input: RequestInfo, init?: RequestInit) {
@@ -55,13 +75,21 @@ export default function AdminEventsClient() {
     description: "",
     date: toDatetimeLocal(new Date()),
     place: "",
+    imageUrl: "",
   })
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const canSubmit = useMemo(() => {
-    return safeText(form.title).length > 0 && safeText(form.description).length > 0 && safeText(form.date).length > 0
+    const image = safeText(form.imageUrl)
+    const imageOk = !image || isValidImageUrl(image)
+    return (
+      safeText(form.title).length > 0 &&
+      safeText(form.description).length > 0 &&
+      safeText(form.date).length > 0 &&
+      imageOk
+    )
   }, [form])
 
   const load = async () => {
@@ -96,10 +124,11 @@ export default function AdminEventsClient() {
           description: safeText(form.description),
           date: new Date(form.date).toISOString(),
           place: safeText(form.place),
+          imageUrl: safeText(form.imageUrl),
         }),
       })
 
-      setForm((p) => ({ ...p, title: "", description: "" }))
+      setForm((p) => ({ ...p, title: "", description: "", imageUrl: "" }))
       await load()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка сохранения")
@@ -123,6 +152,8 @@ export default function AdminEventsClient() {
     <div className="grid gap-8">
       <div className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
         <div className="text-lg font-semibold text-gray-900">Добавить событие</div>
+
+        <UploadPhotoClient targetInputId="imageUrl" />
 
         {error ? (
           <div className="mt-4 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
@@ -163,6 +194,28 @@ export default function AdminEventsClient() {
             />
           </div>
 
+          <input
+            id="imageUrl"
+            value={form.imageUrl}
+            onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))}
+            placeholder="URL картинки (https://… или /uploads/… или /images/…)"
+            className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
+          />
+
+          {!isValidImageUrl(form.imageUrl) && safeText(form.imageUrl).length > 0 ? (
+            <div className="text-xs font-semibold text-rose-700">
+              Нужен корректный URL: https://… или /uploads/… или /images/…
+            </div>
+          ) : null}
+
+          {isValidImageUrl(form.imageUrl) ? (
+            <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white">
+              <div className="aspect-[16/9]">
+                <img src={safeImageSrc(form.imageUrl)} alt="" className="h-full w-full object-cover" />
+              </div>
+            </div>
+          ) : null}
+
           <button
             disabled={!canSubmit || isSaving}
             className="h-11 rounded-md bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
@@ -182,13 +235,19 @@ export default function AdminEventsClient() {
           {items.map((e) => (
             <div key={e.id} className="rounded-2xl border border-indigo-100 p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="text-sm font-semibold text-gray-900">{e.title}</div>
-                  <div className="mt-1 text-xs text-gray-500">
-                    {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(new Date(e.date))}
-                    {e.place ? ` • ${e.place}` : ""}
+                <div className="flex min-w-0 items-start gap-4">
+                  <div className="h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-indigo-100 bg-white">
+                    <img src={safeImageSrc(e.imageUrl)} alt="" className="h-full w-full object-cover" />
                   </div>
-                  <div className="mt-2 text-sm text-gray-700 line-clamp-3">{e.description}</div>
+
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-gray-900">{e.title}</div>
+                    <div className="mt-1 text-xs text-gray-500">
+                      {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(new Date(e.date))}
+                      {e.place ? ` • ${e.place}` : ""}
+                    </div>
+                    <div className="mt-2 text-sm text-gray-700 line-clamp-3">{e.description}</div>
+                  </div>
                 </div>
 
                 <div className="flex shrink-0 items-center gap-2">
@@ -217,3 +276,4 @@ export default function AdminEventsClient() {
     </div>
   )
 }
+

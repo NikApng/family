@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { eventSchema } from "@/lib/validators"
 import { getServerSession } from "next-auth"
@@ -37,8 +38,12 @@ export async function POST(req: Request) {
       description: parsed.data.description.trim(),
       date: parsed.data.date,
       place: (parsed.data.place ?? "").trim() || null,
+      imageUrl: (parsed.data.imageUrl ?? "").trim() || null,
     },
   })
+
+  revalidatePath("/")
+  revalidatePath("/events")
 
   return NextResponse.json(created, { status: 201 })
 }

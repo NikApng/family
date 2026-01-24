@@ -1,8 +1,18 @@
 import Link from "next/link"
 import Image from "next/image"
+import { getSiteTexts } from "@/lib/siteTexts"
 
 
-export function SiteFooter() {
+export async function SiteFooter() {
+    const t = await getSiteTexts([
+        "footer.about",
+        "footer.links.title",
+        "footer.help.label",
+        "footer.help.href",
+        "footer.admin.label",
+        "footer.emergency",
+    ])
+
     return (
         <footer
             className="relative overflow-hidden border-t border-indigo-100 bg-gradient-to-b from-indigo-50/40 via-white to-white">
@@ -29,15 +39,14 @@ export function SiteFooter() {
                         </div>
 
                         <p className="mt-3 max-w-sm text-sm leading-relaxed text-gray-600">
-                            Психологическая поддержка гражданам и их семьям, пережившим тяжёлые
-                            события. Бережно, конфиденциально, рядом.
+                            {t["footer.about"]}
                         </p>
                     </div>
 
 
                     <div>
                         <div className="text-sm font-semibold text-gray-900">
-                            Информация
+                            {t["footer.links.title"]}
                         </div>
                         <ul className="mt-4 grid gap-2 text-sm">
                             <li>
@@ -50,10 +59,10 @@ export function SiteFooter() {
                             </li>
                             <li>
                                 <Link
-                                    href="/help"
+                                    href={t["footer.help.href"]}
                                     className="text-gray-600 hover:text-indigo-700"
                                 >
-                                    Помощь проекту
+                                    {t["footer.help.label"]}
                                 </Link>
                             </li>
                             <li>
@@ -61,7 +70,7 @@ export function SiteFooter() {
                                     href="/admin"
                                     className="text-gray-600 hover:text-indigo-700"
                                 >
-                                    Админ
+                                    {t["footer.admin.label"]}
                                 </Link>
                             </li>
                         </ul>
@@ -71,12 +80,11 @@ export function SiteFooter() {
                 <div
                     className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-indigo-100 pt-6 text-xs text-gray-500 md:flex-row md:items-center">
                     <div>
-                        © {new Date().getFullYear()} "АНО" Про Семью, Про Единство
+                        © {new Date().getFullYear()} «АНО» Про Семью, Про Единство
                     </div>
 
                     <div className="max-w-md leading-relaxed">
-                        Если вы чувствуете угрозу жизни или сильный кризис — пожалуйста,
-                        обратитесь в экстренные службы вашего региона.
+                        {t["footer.emergency"]}
                     </div>
                 </div>
             </div>

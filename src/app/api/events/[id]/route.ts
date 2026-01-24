@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { eventSchema } from "@/lib/validators"
 import { getServerSession } from "next-auth"
@@ -43,8 +44,12 @@ export async function PATCH(req: Request, { params }: Ctx) {
       description: parsed.data.description.trim(),
       date: parsed.data.date,
       place: (parsed.data.place ?? "").trim() || null,
+      imageUrl: (parsed.data.imageUrl ?? "").trim() || null,
     },
   })
+
+  revalidatePath("/")
+  revalidatePath("/events")
 
   return NextResponse.json(updated)
 }
@@ -56,5 +61,7 @@ export async function DELETE(_: Request, { params }: Ctx) {
   const { id } = await params
 
   await prisma.event.delete({ where: { id } })
+  revalidatePath("/")
+  revalidatePath("/events")
   return NextResponse.json({ ok: true })
 }

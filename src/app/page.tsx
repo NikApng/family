@@ -3,6 +3,7 @@ import Link from "next/link"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { bookingSchema } from "@/lib/validators"
+import { getSiteTexts } from "@/lib/siteTexts"
 import { Section } from "@/components/Section"
 import PersonCard from "@/components/PersonCard"
 
@@ -181,16 +182,35 @@ function toTint(value: string): "indigo" | "rose" | "amber" {
 }
 
 export default async function HomePage() {
-  const upcoming = await prisma.event.findMany({
-    orderBy: { date: "asc" },
-    take: 3,
-    where: { date: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
-  })
+  const cutoff = new Date()
+  cutoff.setTime(cutoff.getTime() - 24 * 60 * 60 * 1000)
 
-  const specialists = await prisma.specialist.findMany({
-    where: { isPublished: true },
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-  })
+  const [t, upcoming, specialists] = await Promise.all([
+    getSiteTexts([
+      "home.hero.badge",
+      "home.hero.title",
+      "home.hero.subtitle",
+      "home.hero.ctaPrimary",
+      "home.hero.ctaSecondary",
+      "home.what.title",
+      "home.what.subtitle",
+      "home.what.card1.title",
+      "home.what.card1.description",
+      "home.what.card2.title",
+      "home.what.card2.description",
+      "home.what.card3.title",
+      "home.what.card3.description",
+    ]),
+    prisma.event.findMany({
+      orderBy: { date: "asc" },
+      take: 3,
+      where: { date: { gte: cutoff } },
+    }),
+    prisma.specialist.findMany({
+      where: { isPublished: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+  ])
 
   return (
     <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 text-gray-900">
@@ -204,23 +224,24 @@ export default async function HomePage() {
         <div className="relative mx-auto w-full max-w-6xl px-4 py-14 md:py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/80 px-3 py-1 text-xs font-semibold text-indigo-700 shadow-sm">
-                Про Семью, Про Единство
+              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/80 px-5 py-2 text-base font-semibold text-indigo-700 shadow-sm md:text-lg">
+                {t["home.hero.badge"]}
               </div>
 
               <h1 className="mt-5 text-4xl font-semibold tracking-tight md:text-5xl">
-                Вы не одни.
-                <br />
-                Мы рядом, чтобы поддержать вас.
+                {t["home.hero.title"].split(/\r?\n/).map((line, idx, arr) => (
+                  <span key={`${idx}-${line}`}>
+                    {line}
+                    {idx < arr.length - 1 ? <br /> : null}
+                  </span>
+                ))}
               </h1>
 
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-700">
-                Психологическая поддержка для вас.
-              </p>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-700">{t["home.hero.subtitle"]}</p>
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <PrimaryLink href="#book">Обратитесь к нам прямо сейчас</PrimaryLink>
-                <GhostLink href="#what">Что мы делаем</GhostLink>
+                <PrimaryLink href="#book">{t["home.hero.ctaPrimary"]}</PrimaryLink>
+                <GhostLink href="#what">{t["home.hero.ctaSecondary"]}</GhostLink>
               </div>
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -281,22 +302,22 @@ export default async function HomePage() {
       </section>
 
       <BackdropSection id="what" variant="a">
-        <Section title="Что мы делаем" subtitle="Основные направления поддержки — просто и по делу.">
+        <Section title={t["home.what.title"]} subtitle={t["home.what.subtitle"]}>
           <div className="grid gap-6 md:grid-cols-3">
             <InfoCard
               accent="indigo"
-              title="Консультации психологов"
-              description="Индивидуальная поддержка онлайн или в другом удобном формате. Помогаем снизить тревогу, вернуть опору и ясность."
+              title={t["home.what.card1.title"]}
+              description={t["home.what.card1.description"]}
             />
             <InfoCard
               accent="rose"
-              title="Группы поддержки и терапии"
-              description="Встречи, где можно быть услышанным и не оставаться один на один с переживаниями. Тёплая среда и понятные правила."
+              title={t["home.what.card2.title"]}
+              description={t["home.what.card2.description"]}
             />
             <InfoCard
               accent="amber"
-              title="Информационные ресурсы и помощь близким"
-              description="Рекомендации для родных и друзей, ответы на частые вопросы, аккуратные материалы о том, как поддерживать и не выгорать."
+              title={t["home.what.card3.title"]}
+              description={t["home.what.card3.description"]}
             />
           </div>
 
@@ -359,7 +380,7 @@ export default async function HomePage() {
                   <div className="mt-2 text-lg font-semibold text-gray-900">{e.title}</div>
                   <div className="mt-2 text-sm leading-relaxed text-gray-700 line-clamp-3">{e.description}</div>
                   <div className="mt-5">
-                    <Link href="/events" className="text-sm font-semibold text-indigo-700 hover:underline">
+                    <Link href={`/events/${e.id}`} className="text-sm font-semibold text-indigo-700 hover:underline">
                       Смотреть афишу →
                     </Link>
                   </div>

@@ -38,6 +38,7 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
       }
 
       urlInput.value = json.url
+      urlInput.dispatchEvent(new Event("input", { bubbles: true }))
     } catch {
       setError("Ошибка загрузки")
     } finally {
@@ -68,3 +69,4 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
     </div>
   )
 }
+
