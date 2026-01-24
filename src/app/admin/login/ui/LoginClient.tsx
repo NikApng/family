@@ -46,6 +46,7 @@ export default function LoginClient() {
 
     if (!res?.ok) {
       setError("Неверный логин или пароль")
+      console.log("signIn result", res)
       return
     }
 
