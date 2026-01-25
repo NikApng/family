@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react"
 import { useMemo, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 
 type FormState = {
   email: string
@@ -14,7 +14,6 @@ function safeText(v: unknown) {
 }
 
 export default function LoginClient() {
-  const router = useRouter()
   const sp = useSearchParams()
 
   const callbackUrl = useMemo(() => {
@@ -50,7 +49,7 @@ export default function LoginClient() {
       return
     }
 
-    router.replace(res.url ?? callbackUrl)
+    window.location.assign(res.url ?? callbackUrl)
   }
 
   return (
