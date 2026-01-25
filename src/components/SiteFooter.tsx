@@ -4,6 +4,8 @@ import { getSiteTexts } from "@/lib/siteTexts"
 
 
 export async function SiteFooter() {
+    const showDevAdminLink = process.env.NODE_ENV === "development"
+
     const t = await getSiteTexts([
         "footer.about",
         "footer.links.title",
@@ -65,14 +67,13 @@ export async function SiteFooter() {
                                     {t["footer.help.label"]}
                                 </Link>
                             </li>
-                            <li>
-                                <Link
-                                    href="/admin"
-                                    className="text-gray-600 hover:text-indigo-700"
-                                >
-                                    {t["footer.admin.label"]}
-                                </Link>
-                            </li>
+                            {/* {showDevAdminLink ? (
+                                <li>
+                                    <Link href="/admin" className="text-xs text-gray-500 hover:text-indigo-700">
+                                        {t["footer.admin.label"]}
+                                    </Link>
+                                </li>
+                            ) : null} */}
                         </ul>
                     </div>
                 </div>
