@@ -15,8 +15,8 @@ function isActive(pathname: string, href: string) {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
-      <header className="sticky top-0 z-20 border-b border-indigo-100 bg-white/80 backdrop-blur">
+    <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
+      <header className="sticky top-16 z-20 border-b border-indigo-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <div className="flex items-center gap-3">
             <Link href="/" className="text-sm font-semibold text-gray-900">
@@ -39,13 +39,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-2">
             <Link
               href="/"
-              className="inline-flex h-10 items-center justify-center rounded-md border border-indigo-100 bg-white px-4 text-sm font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-indigo-100 bg-white px-4 text-sm font-semibold leading-none text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"
             >
               На сайт
             </Link>
             <Link
               href="/admin/login"
-              className="inline-flex h-10 items-center justify-center rounded-md bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-indigo-600 px-4 text-sm font-semibold leading-none text-white hover:bg-indigo-700"
             >
               Выйти
             </Link>

@@ -50,8 +50,8 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
     <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/40 p-4">
       <div className="text-sm font-semibold text-gray-900">Загрузка файла</div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-3">
-        <input ref={inputRef} type="file" accept="image/*" className="text-sm" />
+      <div className="mt-3 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+        <input ref={inputRef} type="file" accept="image/*" className="w-full min-w-0 max-w-full text-sm sm:w-auto" />
 
         <button
           type="button"
@@ -69,4 +69,3 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
     </div>
   )
 }
-

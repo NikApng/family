@@ -74,7 +74,7 @@ export default async function AdminReviewsPage({
       </div>
 
       <div className="mt-6 overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
-        <div className="grid grid-cols-12 gap-3 border-b border-indigo-100 px-4 py-3 text-xs font-semibold text-gray-600">
+        <div className="hidden grid-cols-12 gap-3 border-b border-indigo-100 px-4 py-3 text-xs font-semibold text-gray-600 md:grid">
           <div className="col-span-2">Автор</div>
           <div className="col-span-4">Отзыв</div>
           <div className="col-span-1">Рейтинг</div>
@@ -84,56 +84,107 @@ export default async function AdminReviewsPage({
         </div>
 
         {items.map((x) => (
-          <div key={x.id} className="grid grid-cols-12 gap-3 px-4 py-3 text-sm text-gray-800">
-            <div className="col-span-2 min-w-0">
-              <div className="truncate font-semibold text-gray-900">{authorLabel(x.authorName, x.isAnonymous)}</div>
+          <div key={x.id} className="border-b border-indigo-100 last:border-none">
+            <div className="px-4 py-4 md:hidden">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-gray-900">{authorLabel(x.authorName, x.isAnonymous)}</div>
+                  <div className="mt-1 text-xs text-gray-600">
+                    {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(x.createdAt)}
+                    {x.rating ? ` • ${x.rating}/5` : ""}
+                  </div>
+                </div>
+
+                <span
+                  className={`inline-flex shrink-0 items-center rounded-md border px-2 py-1 text-[11px] font-semibold ${
+                    STATUS_BADGE[x.status]
+                  }`}
+                >
+                  {STATUS_VALUE_LABEL[x.status]}
+                </span>
+              </div>
+
+              <div className="mt-3 text-sm text-gray-800 line-clamp-4">{x.text}</div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {x.status === "PENDING" ? (
+                  <>
+                    <form action={approveReviewAction} className="w-full sm:w-auto">
+                      <input type="hidden" name="id" value={x.id} />
+                      <button className="inline-flex h-9 w-full items-center justify-center rounded-md border border-emerald-100 bg-emerald-50 px-3 text-xs font-semibold text-emerald-700 hover:border-emerald-200 sm:w-auto">
+                        Подтвердить
+                      </button>
+                    </form>
+
+                    <form action={rejectReviewAction} className="w-full sm:w-auto">
+                      <input type="hidden" name="id" value={x.id} />
+                      <button className="inline-flex h-9 w-full items-center justify-center rounded-md border border-amber-100 bg-amber-50 px-3 text-xs font-semibold text-amber-700 hover:border-amber-200 sm:w-auto">
+                        Отклонить
+                      </button>
+                    </form>
+                  </>
+                ) : null}
+
+                <form action={deleteReviewAction} className="w-full sm:w-auto">
+                  <input type="hidden" name="id" value={x.id} />
+                  <button className="inline-flex h-9 w-full items-center justify-center rounded-md border border-rose-100 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:border-rose-200 sm:w-auto">
+                    Удалить
+                  </button>
+                </form>
+              </div>
             </div>
 
-            <div className="col-span-4 min-w-0">
-              <div className="text-sm text-gray-800 line-clamp-3">{x.text}</div>
-            </div>
+            <div className="hidden grid-cols-12 gap-3 px-4 py-3 text-sm text-gray-800 md:grid">
+              <div className="col-span-2 min-w-0">
+                <div className="truncate font-semibold text-gray-900">{authorLabel(x.authorName, x.isAnonymous)}</div>
+              </div>
 
-            <div className="col-span-1">{x.rating ?? "—"}</div>
+              <div className="col-span-4 min-w-0">
+                <div className="text-sm text-gray-800 line-clamp-3">{x.text}</div>
+              </div>
 
-            <div className="col-span-2 text-xs text-gray-600">
-              {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(x.createdAt)}
-            </div>
+              <div className="col-span-1">{x.rating ?? "—"}</div>
 
-            <div className="col-span-1">
-              <span
-                className={`inline-flex items-center rounded-md border px-2 py-1 text-[11px] font-semibold ${
-                  STATUS_BADGE[x.status]
-                }`}
-              >
-                {STATUS_VALUE_LABEL[x.status]}
-              </span>
-            </div>
+              <div className="col-span-2 text-xs text-gray-600">
+                {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(x.createdAt)}
+              </div>
 
-            <div className="col-span-2 flex flex-wrap justify-end gap-2">
-              {x.status === "PENDING" ? (
-                <>
-                  <form action={approveReviewAction}>
-                    <input type="hidden" name="id" value={x.id} />
-                    <button className="inline-flex h-9 items-center justify-center rounded-md border border-emerald-100 bg-emerald-50 px-3 text-xs font-semibold text-emerald-700 hover:border-emerald-200">
-                      Подтвердить
-                    </button>
-                  </form>
+              <div className="col-span-1">
+                <span
+                  className={`inline-flex items-center rounded-md border px-2 py-1 text-[11px] font-semibold ${
+                    STATUS_BADGE[x.status]
+                  }`}
+                >
+                  {STATUS_VALUE_LABEL[x.status]}
+                </span>
+              </div>
 
-                  <form action={rejectReviewAction}>
-                    <input type="hidden" name="id" value={x.id} />
-                    <button className="inline-flex h-9 items-center justify-center rounded-md border border-amber-100 bg-amber-50 px-3 text-xs font-semibold text-amber-700 hover:border-amber-200">
-                      Отклонить
-                    </button>
-                  </form>
-                </>
-              ) : null}
+              <div className="col-span-2 flex flex-wrap justify-end gap-2">
+                {x.status === "PENDING" ? (
+                  <>
+                    <form action={approveReviewAction}>
+                      <input type="hidden" name="id" value={x.id} />
+                      <button className="inline-flex h-9 items-center justify-center rounded-md border border-emerald-100 bg-emerald-50 px-3 text-xs font-semibold text-emerald-700 hover:border-emerald-200">
+                        Подтвердить
+                      </button>
+                    </form>
 
-              <form action={deleteReviewAction}>
-                <input type="hidden" name="id" value={x.id} />
-                <button className="inline-flex h-9 items-center justify-center rounded-md border border-rose-100 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:border-rose-200">
-                  Удалить
-                </button>
-              </form>
+                    <form action={rejectReviewAction}>
+                      <input type="hidden" name="id" value={x.id} />
+                      <button className="inline-flex h-9 items-center justify-center rounded-md border border-amber-100 bg-amber-50 px-3 text-xs font-semibold text-amber-700 hover:border-amber-200">
+                        Отклонить
+                      </button>
+                    </form>
+                  </>
+                ) : null}
+
+                <form action={deleteReviewAction}>
+                  <input type="hidden" name="id" value={x.id} />
+                  <button className="inline-flex h-9 items-center justify-center rounded-md border border-rose-100 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:border-rose-200">
+                    Удалить
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         ))}
