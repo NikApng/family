@@ -53,3 +53,30 @@ export const serviceSchema = z.object({
     .optional()
     .default([]),
 })
+
+const ratingSchema = z.preprocess((v) => {
+  if (v === null || v === undefined) return null
+  if (typeof v === "number") return v
+  const str = String(v).trim()
+  if (!str) return null
+  if (str.toLowerCase() === "null") return null
+  const n = Number(str)
+  return Number.isFinite(n) ? n : v
+}, z.number().int().min(1).max(5).finite().nullable())
+
+const isAnonymousSchema = z.preprocess((v) => {
+  if (typeof v === "boolean") return v
+
+  const str = String(v ?? "").trim().toLowerCase()
+  if (str === "true" || str === "on" || str === "1") return true
+
+  return false
+}, z.boolean())
+
+export const reviewCreateSchema = z.object({
+  text: z.string().trim().min(20).max(1000),
+  name: z.string().trim().max(60).optional().or(z.literal("")),
+  isAnonymous: isAnonymousSchema.optional().default(false),
+  rating: ratingSchema.optional().default(null),
+  website: z.string().optional().or(z.literal("")),
+})
