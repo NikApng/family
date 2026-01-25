@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+    color-scheme: light;
     --bg: 246 242 236;
     --card: 255 255 255;
     --text: 28 28 30;
@@ -9,4 +10,85 @@
     --primary: 43 94 75;
     --primaryText: 255 255 255;
     --accent: 238 227 213;
+}
+
+.dark {
+    color-scheme: dark;
+    --bg: 14 16 20;
+    --card: 22 24 29;
+    --text: 236 237 241;
+    --muted: 160 163 170;
+    --border: 48 52 60;
+    --primary: 92 196 156;
+    --primaryText: 10 12 16;
+    --accent: 32 34 41;
+}
+
+.dark .bg-white {
+    background-color: rgb(var(--card) / 1);
+}
+
+.dark .bg-white\/80 {
+    background-color: rgb(var(--card) / 0.8);
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800 {
+    color: rgb(var(--text) / 1);
+}
+
+.dark .text-gray-700 {
+    color: rgb(var(--text) / 0.92);
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500 {
+    color: rgb(var(--muted) / 1);
+}
+
+.dark .border-indigo-100,
+.dark .border-indigo-200,
+.dark .border-rose-100,
+.dark .border-rose-200,
+.dark .border-amber-100,
+.dark .border-amber-200 {
+    border-color: rgb(var(--border) / 1);
+}
+
+.dark .from-slate-50 {
+    --tw-gradient-from: rgb(var(--bg) / 1);
+    --tw-gradient-to: rgb(var(--bg) / 0);
+}
+
+.dark .to-slate-50 {
+    --tw-gradient-to: rgb(var(--bg) / 1);
+}
+
+.dark .from-white {
+    --tw-gradient-from: rgb(var(--card) / 1);
+    --tw-gradient-to: rgb(var(--card) / 0);
+}
+
+.dark .to-white {
+    --tw-gradient-to: rgb(var(--card) / 1);
+}
+
+.dark .via-white {
+    --tw-gradient-stops: var(--tw-gradient-from), rgb(var(--card) / 1), var(--tw-gradient-to);
+}
+
+.theme-toggle__icon {
+    display: inline-flex;
+}
+
+.theme-toggle__icon--dark {
+    display: none;
+}
+
+.dark .theme-toggle__icon--dark {
+    display: inline-flex;
+}
+
+.dark .theme-toggle__icon--light {
+    display: none;
 }
