@@ -2,7 +2,10 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { approveReviewAction, deleteReviewAction, rejectReviewAction } from "./actions"
 
+export const dynamic = "force-dynamic"
+
 type StatusFilter = "ALL" | "PENDING" | "APPROVED" | "REJECTED"
+type ReviewStatusValue = Exclude<StatusFilter, "ALL">
 
 const STATUS_LABEL: Record<StatusFilter, string> = {
   ALL: "Все",
@@ -15,6 +18,12 @@ const STATUS_BADGE: Record<Exclude<StatusFilter, "ALL">, string> = {
   PENDING: "border-amber-100 bg-amber-50 text-amber-700",
   APPROVED: "border-emerald-100 bg-emerald-50 text-emerald-700",
   REJECTED: "border-rose-100 bg-rose-50 text-rose-700",
+}
+
+const STATUS_VALUE_LABEL: Record<ReviewStatusValue, string> = {
+  PENDING: "На модерации",
+  APPROVED: "Подтверждён",
+  REJECTED: "Отклонён",
 }
 
 function normalizeStatus(value: unknown): StatusFilter {
@@ -55,7 +64,7 @@ export default async function AdminReviewsPage({
             href={x === "PENDING" ? "/admin/reviews" : `/admin/reviews?status=${x}`}
             className={`inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm font-semibold shadow-sm transition ${
               status === x
-                ? "border-indigo-200 bg-indigo-50 text-indigo-900"
+                ? "border-indigo-200 bg-indigo-50 text-gray-900"
                 : "border-indigo-100 bg-white text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"
             }`}
           >
@@ -78,7 +87,6 @@ export default async function AdminReviewsPage({
           <div key={x.id} className="grid grid-cols-12 gap-3 px-4 py-3 text-sm text-gray-800">
             <div className="col-span-2 min-w-0">
               <div className="truncate font-semibold text-gray-900">{authorLabel(x.authorName, x.isAnonymous)}</div>
-              {x.ipHash ? <div className="mt-1 truncate text-xs text-gray-500">{x.ipHash.slice(0, 10)}…</div> : null}
             </div>
 
             <div className="col-span-4 min-w-0">
@@ -97,7 +105,7 @@ export default async function AdminReviewsPage({
                   STATUS_BADGE[x.status]
                 }`}
               >
-                {x.status}
+                {STATUS_VALUE_LABEL[x.status]}
               </span>
             </div>
 
@@ -135,4 +143,3 @@ export default async function AdminReviewsPage({
     </div>
   )
 }
-
