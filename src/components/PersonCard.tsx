@@ -7,9 +7,31 @@ type Props = {
   badge: string
   tint: "indigo" | "rose" | "amber"
   href: string
+  imageUrl?: string | null
 }
 
-export default function PersonCard({ name, role, exp, badge, tint, href }: Props) {
+function safeText(v: unknown) {
+  return String(v ?? "").trim()
+}
+
+function isValidImageUrl(value: string) {
+  const v = safeText(value)
+  if (!v) return false
+
+  if (v.startsWith("/uploads/")) return true
+  if (v.startsWith("/images/")) return true
+  if (v.startsWith("http://")) return true
+  if (v.startsWith("https://")) return true
+
+  return false
+}
+
+function safeImageSrc(value: string | null | undefined) {
+  const v = safeText(value)
+  return isValidImageUrl(v) ? v : "/images/PersonPhoto.png"
+}
+
+export default function PersonCard({ name, role, exp, badge, tint, href, imageUrl }: Props) {
   const bg =
     tint === "indigo"
       ? "from-white to-indigo-50/70 border-indigo-100 hover:border-indigo-200"
@@ -38,7 +60,12 @@ export default function PersonCard({ name, role, exp, badge, tint, href }: Props
     >
       <div className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-2xl ${glow}`} />
       <div className="relative">
-        <div className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${badgeBg}`}>{badge}</div>
+        <div className="flex items-start justify-between gap-4">
+          <div className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${badgeBg}`}>{badge}</div>
+          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-indigo-100 bg-white">
+            <img src={safeImageSrc(imageUrl)} alt={name} className="h-full w-full object-cover" />
+          </div>
+        </div>
         <div className="mt-4 text-xs font-medium text-gray-600">{role}</div>
         <div className="mt-1 text-xl font-semibold text-gray-900">{name}</div>
         <div className="mt-3 text-sm leading-relaxed text-gray-700">{exp}</div>

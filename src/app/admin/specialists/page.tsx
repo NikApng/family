@@ -18,6 +18,7 @@ async function togglePublish(formData: FormData) {
 
   revalidatePath("/admin/specialists")
   revalidatePath("/")
+  revalidatePath(`/specialists/${current.slug}`)
 }
 
 async function removeSpecialist(formData: FormData) {
@@ -26,10 +27,14 @@ async function removeSpecialist(formData: FormData) {
   const id = String(formData.get("id") ?? "")
   if (!id) return
 
+  const existing = await prisma.specialist.findUnique({ where: { id }, select: { slug: true } })
+  if (!existing) return
+
   await prisma.specialist.delete({ where: { id } })
 
   revalidatePath("/admin/specialists")
   revalidatePath("/")
+  revalidatePath(`/specialists/${existing.slug}`)
 }
 
 export default async function AdminSpecialistsPage() {
@@ -55,11 +60,11 @@ export default async function AdminSpecialistsPage() {
         </div>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-sm">
         <div className="hidden grid-cols-12 gap-3 border-b border-indigo-100 px-4 py-3 text-xs font-semibold text-gray-600 md:grid">
           <div className="col-span-4">Имя</div>
           <div className="col-span-3">Роль</div>
-          <div className="col-span-2">Slug</div>
+          <div className="col-span-2">Ссылка</div>
           <div className="col-span-1">Публ.</div>
           <div className="col-span-2 text-right">Действия</div>
         </div>
@@ -76,7 +81,7 @@ export default async function AdminSpecialistsPage() {
                   </div>
                   <div className="mt-1 text-xs text-gray-600">{x.role}</div>
                   <div className="mt-1 text-xs text-gray-500">
-                    {x.slug} • {x.isPublished ? "Опубликован" : "Скрыт"}
+                    /specialists/{x.slug} • {x.isPublished ? "Опубликован" : "Скрыт"}
                   </div>
                 </div>
 
@@ -94,6 +99,13 @@ export default async function AdminSpecialistsPage() {
               {x.badge ? <div className="mt-3 text-xs text-gray-500">{x.badge}</div> : null}
 
               <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  href={`/admin/specialists/${x.id}`}
+                  className="inline-flex h-9 w-full items-center justify-center rounded-md border border-indigo-100 bg-white px-3 text-xs font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50 sm:w-auto"
+                >
+                  Редактировать
+                </Link>
+
                 <form action={togglePublish} className="w-full sm:w-auto">
                   <input type="hidden" name="id" value={x.id} />
                   <button className="inline-flex h-9 w-full items-center justify-center rounded-md border border-indigo-100 bg-white px-3 text-xs font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50 sm:w-auto">
@@ -119,10 +131,21 @@ export default async function AdminSpecialistsPage() {
               </div>
 
               <div className="col-span-3">{x.role}</div>
-              <div className="col-span-2 text-gray-600">{x.slug}</div>
+              <div className="col-span-2 truncate text-gray-600">
+                <Link href={`/specialists/${x.slug}`} className="hover:underline">
+                  /specialists/{x.slug}
+                </Link>
+              </div>
               <div className="col-span-1">{x.isPublished ? "Да" : "Нет"}</div>
 
-              <div className="col-span-2 flex justify-end gap-2">
+              <div className="col-span-2 flex flex-wrap justify-end gap-2">
+                <Link
+                  href={`/admin/specialists/${x.id}`}
+                  className="inline-flex h-9 items-center justify-center rounded-md border border-indigo-100 bg-white px-3 text-xs font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"
+                >
+                  Редактировать
+                </Link>
+
                 <form action={togglePublish}>
                   <input type="hidden" name="id" value={x.id} />
                   <button className="inline-flex h-9 items-center justify-center rounded-md border border-indigo-100 bg-white px-3 text-xs font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50">

@@ -37,6 +37,7 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
       name: String(body.name ?? "").trim(),
       excerpt: String(body.excerpt ?? "").trim(),
       bio: String(body.bio ?? "").trim(),
+      imageUrl: String(body.imageUrl ?? "").trim() || null,
       isPublished: Boolean(body.isPublished),
       sortOrder: Number(body.sortOrder ?? 0),
     },

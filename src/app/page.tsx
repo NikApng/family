@@ -309,6 +309,7 @@ export default async function HomePage() {
                 badge={s.badge}
                 tint={toTint(s.badgeTone)}
                 href={`/specialists/${s.slug}`}
+                imageUrl={s.imageUrl}
               />
             ))}
           </div>

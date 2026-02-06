@@ -17,10 +17,22 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
   const [error, setError] = useState<string | null>(null)
 
   const upload = async () => {
-    const file = inputRef.current?.files?.[0]
+    const fileInput = inputRef.current
+    const file = fileInput?.files?.[0]
     const urlInput = document.getElementById(targetInputId) as HTMLInputElement | null
 
-    if (!file || !urlInput) return
+    if (!urlInput) {
+      setError("Не найдено поле для URL картинки")
+      return
+    }
+
+    if (!fileInput) return
+
+    if (!file) {
+      setError("Сначала выберите файл")
+      fileInput.click()
+      return
+    }
 
     setIsLoading(true)
     setError(null)
@@ -51,7 +63,13 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
       <div className="text-sm font-semibold text-gray-900">Загрузка файла</div>
 
       <div className="mt-3 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
-        <input ref={inputRef} type="file" accept="image/*" className="w-full min-w-0 max-w-full text-sm sm:w-auto" />
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          onChange={() => setError(null)}
+          className="w-full min-w-0 max-w-full text-sm sm:w-auto"
+        />
 
         <button
           type="button"

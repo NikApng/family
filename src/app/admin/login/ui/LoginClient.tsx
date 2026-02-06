@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react"
 import { useMemo, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 type FormState = {
   email: string
@@ -13,12 +13,43 @@ function safeText(v: unknown) {
   return String(v ?? "").trim()
 }
 
+function safeAdminRedirect(value: unknown) {
+  const raw = safeText(value)
+  if (!raw) return "/admin"
+
+  let path = raw
+
+  // next-auth may return an absolute URL here; normalize to a same-origin path.
+  try {
+    if (raw.startsWith("http://") || raw.startsWith("https://")) {
+      const u = new URL(raw)
+      path = `${u.pathname}${u.search}${u.hash}`
+    }
+  } catch {}
+
+  if (!path.startsWith("/") || path.startsWith("//")) return "/admin"
+
+  // Drop Next.js internal RSC param if it was captured by middleware navigation redirect.
+  try {
+    const u = new URL(path, "http://localhost")
+    u.searchParams.delete("_rsc")
+    path = `${u.pathname}${u.search}${u.hash}`
+  } catch {}
+
+  if (path === "/admin/login" || path.startsWith("/admin/login?")) return "/admin"
+  if (!path.startsWith("/admin")) return "/admin"
+
+  return path
+}
+
 export default function LoginClient() {
   const sp = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
 
   const callbackUrl = useMemo(() => {
     const raw = sp.get("callbackUrl")
-    return safeText(raw) || "/admin"
+    return safeAdminRedirect(raw)
   }, [sp])
 
   const [form, setForm] = useState<FormState>({ email: "", password: "" })
@@ -49,7 +80,17 @@ export default function LoginClient() {
       return
     }
 
-    window.location.assign(res.url ?? callbackUrl)
+    const target = safeAdminRedirect(res.url ?? callbackUrl)
+
+    // Avoid no-op navigation to the same route segment after login (RSC cache may keep stale UI).
+    if (target === pathname || target.startsWith(`${pathname}?`)) {
+      router.replace("/admin")
+      router.refresh()
+      return
+    }
+
+    router.replace(target)
+    router.refresh()
   }
 
   return (

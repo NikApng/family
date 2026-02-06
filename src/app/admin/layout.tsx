@@ -1,5 +1,7 @@
 import Link from "next/link"
 
+export const dynamic = "force-dynamic"
+
 const NAV_ITEMS = [
   { href: "/admin/specialists", label: "Специалисты" },
   { href: "/admin/services", label: "Услуги" },

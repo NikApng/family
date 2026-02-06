@@ -19,6 +19,7 @@ export async function POST(req: Request) {
       name: body.name,
       excerpt: body.excerpt,
       bio: body.bio,
+      imageUrl: String(body.imageUrl ?? "").trim() || null,
       isPublished: Boolean(body.isPublished),
       sortOrder: Number(body.sortOrder ?? 0),
     },

@@ -9,6 +9,18 @@ function toSlug(value: string | string[]) {
   return value ?? ""
 }
 
+function isValidImageUrl(value: string) {
+  const v = String(value ?? "").trim()
+  if (!v) return false
+
+  return v.startsWith("http://") || v.startsWith("https://") || v.startsWith("/uploads/") || v.startsWith("/images/")
+}
+
+function safeImageSrc(value: string | null) {
+  const v = String(value ?? "").trim()
+  return isValidImageUrl(v) ? v : "/images/PersonPhoto.png"
+}
+
 export default async function SpecialistPage({ params }: { params: Params }) {
   const { slug: rawSlug } = await params
   const slug = String(toSlug(rawSlug)).trim()
@@ -29,6 +41,14 @@ export default async function SpecialistPage({ params }: { params: Params }) {
         </Link>
 
         <div className="mt-6 rounded-3xl border border-indigo-100 bg-white p-8 shadow-sm">
+          {specialist.imageUrl ? (
+            <div className="mb-6 overflow-hidden rounded-2xl border border-indigo-100 bg-white">
+              <div className="aspect-[16/9]">
+                <img src={safeImageSrc(specialist.imageUrl)} alt={specialist.name} className="h-full w-full object-cover" />
+              </div>
+            </div>
+          ) : null}
+
           <div className="text-sm text-gray-700">{specialist.role}</div>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-gray-900">{specialist.name}</h1>
 
