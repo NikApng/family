@@ -1,6 +1,13 @@
 import Link from "next/link"
 
+import { getServerSession } from "next-auth"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/auth"
+
 export const dynamic = "force-dynamic"
+
+const LOGIN_PATH = "/admin/login"
 
 const NAV_ITEMS = [
   { href: "/admin/specialists", label: "Специалисты" },
@@ -15,7 +22,13 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions)
+  const pathname = (await headers()).get("x-admin-pathname") ?? ""
+  const isLoginPage = pathname === LOGIN_PATH
+
+  if (!session && !isLoginPage) redirect(LOGIN_PATH)
+
   return (
     <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <header className="sticky top-16 z-20 border-b border-indigo-100 bg-white/80 backdrop-blur">
