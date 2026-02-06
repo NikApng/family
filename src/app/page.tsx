@@ -8,6 +8,8 @@ import { Section } from "@/components/Section"
 import PersonCard from "@/components/PersonCard"
 import ReviewsSection from "@/components/Reviews/ReviewsSection"
 
+export const dynamic = "force-dynamic"
+
 async function createBooking(formData: FormData) {
   "use server"
 

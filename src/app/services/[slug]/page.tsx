@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma"
 import { Section } from "@/components/Section"
 import { serviceDefaults, type ServiceBlock, type ServiceSlug } from "@/lib/services"
 
+export const dynamic = "force-dynamic"
+
 type Params = Promise<{ slug: string | string[] }>
 
 function toSlug(value: string | string[]) {

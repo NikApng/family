@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma"
 import { Section } from "@/components/Section"
 import Image from "next/image"
 
+export const dynamic = "force-dynamic"
+
 export default async function GalleryPage() {
     const photos = await prisma.photoReport.findMany({ orderBy: { createdAt: "desc" } })
 

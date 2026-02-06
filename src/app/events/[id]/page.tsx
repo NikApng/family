@@ -2,6 +2,8 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 
+export const dynamic = "force-dynamic"
+
 type Params = Promise<{ id: string | string[] }>
 
 function toId(value: string | string[]) {
@@ -68,4 +70,3 @@ export default async function EventPage({ params }: { params: Params }) {
     </div>
   )
 }
-

@@ -3,6 +3,8 @@ import { Section } from "@/components/Section"
 import { getApprovedReviews } from "@/lib/reviews"
 import { ReviewCard } from "@/components/Reviews/ReviewCard"
 
+export const dynamic = "force-dynamic"
+
 const TINTS = ["rose", "indigo", "amber"] as const
 
 export default async function ReviewsPage() {
@@ -51,4 +53,3 @@ export default async function ReviewsPage() {
     </div>
   )
 }
-

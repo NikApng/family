@@ -2,6 +2,8 @@ import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { serviceDefaultsList } from "@/lib/services"
 
+export const dynamic = "force-dynamic"
+
 export default async function ServicesPage() {
   const [items, total] = await prisma.$transaction([
     prisma.service.findMany({
@@ -47,4 +49,3 @@ export default async function ServicesPage() {
     </div>
   )
 }
-
