@@ -23,6 +23,7 @@ export async function middleware(req: NextRequest) {
 
   const url = req.nextUrl.clone()
   url.pathname = SIGN_IN_PATH
+  url.search = ""
   url.searchParams.set('callbackUrl', callbackUrl.pathname + callbackUrl.search)
   const res = NextResponse.redirect(url)
   res.headers.set("Cache-Control", "no-store")
