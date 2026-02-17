@@ -151,10 +151,11 @@ function toTint(value: string): "indigo" | "rose" | "amber" {
 }
 
 export default async function HomePage() {
-  const cutoff = new Date()
-  cutoff.setTime(cutoff.getTime() - 24 * 60 * 60 * 1000)
+  const now = new Date()
+  const pastCutoff = new Date(now)
+  pastCutoff.setDate(pastCutoff.getDate() - 30)
 
-  const [t, upcoming, specialists] = await Promise.all([
+  const [t, upcoming, recentPast, specialists] = await Promise.all([
     getSiteTexts([
       "home.hero.badge",
       "home.hero.title",
@@ -173,13 +174,19 @@ export default async function HomePage() {
     prisma.event.findMany({
       orderBy: { date: "asc" },
       take: 3,
-      where: { date: { gte: cutoff } },
+      where: { date: { gte: now } },
+    }),
+    prisma.event.findMany({
+      orderBy: { date: "desc" },
+      take: 3,
+      where: { date: { lt: now, gte: pastCutoff } },
     }),
     prisma.specialist.findMany({
       where: { isPublished: true },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
     }),
   ])
+  const eventsForHome = upcoming.length ? upcoming : recentPast
 
   return (
     <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 text-gray-900">
@@ -334,8 +341,12 @@ export default async function HomePage() {
 
       <BackdropSection id="events" variant="d">
         <Section title="Ближайшие мероприятия" subtitle="Актуальные встречи и события.">
+          {!upcoming.length && recentPast.length ? (
+            <div className="mb-5 text-sm text-gray-600">Показываем прошедшие мероприятия за последний месяц.</div>
+          ) : null}
+
           <div className="grid gap-6 md:grid-cols-3">
-            {upcoming.map((e) => (
+            {eventsForHome.map((e) => (
               <div
                 key={e.id}
                 className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-gradient-to-b from-white to-indigo-50/60 p-7 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
@@ -356,7 +367,7 @@ export default async function HomePage() {
               </div>
             ))}
 
-            {!upcoming.length ? (
+            {!eventsForHome.length ? (
               <div className="rounded-3xl border border-indigo-100 bg-white p-7 text-sm text-gray-700 shadow-sm">
                 Скоро добавим ближайшие события.
               </div>
