@@ -54,7 +54,7 @@ export default function ContactsPage() {
               <div className="text-sm text-gray-600">Часы работы</div>
             </div>
             <div className="mt-3 text-lg font-semibold text-gray-900">Пн–Пт 10:00–19:00</div>
-            <div className="mt-1 text-xs text-gray-500">Онлайн-заявки — круглосуточно</div>
+            <div className="mt-1 text-xs text-gray-500">Онлайн-заявки - круглосуточно</div>
           </div>
 
           <div className="rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm transition hover:border-indigo-200 hover:shadow-md">
@@ -74,7 +74,7 @@ export default function ContactsPage() {
             <div className="text-base font-semibold text-gray-900">Если говорить трудно</div>
             <p className="mt-2">
               Вы можете написать нам на почту или оставить короткое сообщение. Необязательно
-              подробно описывать ситуацию — мы аккуратно уточним всё сами.
+              подробно описывать ситуацию - мы аккуратно уточним всё сами.
             </p>
             <p className="mt-3 text-xs text-gray-600">
               Мы не передаём ваши данные третьим лицам.
@@ -107,7 +107,7 @@ export default function ContactsPage() {
               Нужна поддержка прямо сейчас?
             </div>
             <div className="mt-2 max-w-xl  text-sm leading-relaxed text-gray-600">
-              Вы можете оставить заявку — мы свяжемся с вами и предложим подходящий
+              Вы можете оставить заявку - мы свяжемся с вами и предложим подходящий
               формат помощи.
             </div>
           </div>

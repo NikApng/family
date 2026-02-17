@@ -112,7 +112,7 @@ export function ReviewForm() {
           placeholder="Напишите, что вам помогло (20–1000 символов)"
           className="min-h-32 rounded-md border border-indigo-100 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
         />
-        <div className="text-xs text-gray-500">Новые отзывы не публикуются автоматически — сначала модерация.</div>
+        <div className="text-xs text-gray-500">Новые отзывы не публикуются автоматически - сначала модерация.</div>
       </div>
 
       <label className="flex items-center gap-2 text-sm text-gray-700">

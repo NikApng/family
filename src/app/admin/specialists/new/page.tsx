@@ -114,7 +114,7 @@ export default function AdminSpecialistsNewPage() {
                 placeholder="anna-p"
               />
               <div className="text-xs text-gray-500">
-                Будет в URL: /specialists/… (латиница/цифры). Если пусто — сделаем из имени.
+                Будет в URL: /specialists/… (латиница/цифры). Если пусто - сделаем из имени.
               </div>
             </div>
 

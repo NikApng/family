@@ -54,7 +54,7 @@ export const serviceDefaults: Record<ServiceSlug, ServiceDefault> = {
   group: {
     sortOrder: 2,
     title: "Группа взаимопомощи",
-    intro: "Поддерживающее пространство, где вы не одни — рядом люди, которые понимают.",
+    intro: "Поддерживающее пространство, где вы не одни - рядом люди, которые понимают.",
     blocks: [
       {
         title: "Что это такое",
@@ -66,7 +66,7 @@ export const serviceDefaults: Record<ServiceSlug, ServiceDefault> = {
       },
       {
         title: "Регистрация",
-        text: "Оставьте заявку — мы уточним формат и подтвердим участие.",
+        text: "Оставьте заявку - мы уточним формат и подтвердим участие.",
       },
     ],
   },

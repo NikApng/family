@@ -193,8 +193,10 @@ export default async function HomePage() {
         <div className="relative mx-auto w-full max-w-6xl px-4 py-14 md:py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/80 px-5 py-2 text-base font-semibold text-indigo-700 shadow-sm md:text-lg">
-                {t["home.hero.badge"]}
+              <div className="inline-flex max-w-full rounded-2xl border border-indigo-100 bg-white/80 px-4 py-2.5 text-indigo-700 shadow-sm sm:px-5">
+                <span className="whitespace-pre-line text-xs font-semibold leading-tight sm:text-sm md:text-base">
+                  {t["home.hero.badge"]}
+                </span>
               </div>
 
               <h1 className="mt-5 text-4xl font-semibold tracking-tight md:text-5xl">
@@ -261,7 +263,7 @@ export default async function HomePage() {
                 </div>
 
                 <div className="mt-4 rounded-2xl border border-amber-100 bg-amber-50 p-4 text-xs leading-relaxed text-gray-700">
-                  Если вы чувствуете, что вам небезопасно или есть риск для жизни — обратитесь в экстренные службы вашего
+                  Если вы чувствуете, что вам небезопасно или есть риск для жизни - обратитесь в экстренные службы вашего
                   региона.
                 </div>
               </div>
@@ -325,7 +327,7 @@ export default async function HomePage() {
       </BackdropSection>
 
       <BackdropSection id="reviews" variant="c">
-        <Section title="Отзывы клиентов" subtitle="Реальные истории благодарности — можно публиковать анонимно.">
+        <Section title="Отзывы клиентов" subtitle="Реальные истории благодарности - можно публиковать анонимно.">
           <ReviewsSection />
         </Section>
       </BackdropSection>
@@ -364,7 +366,7 @@ export default async function HomePage() {
       </BackdropSection>
 
       <BackdropSection id="book" variant="a">
-        <Section title="Обратиться за поддержкой" subtitle="Оставьте заявку — мы свяжемся с вами и подберём удобный формат.">
+        <Section title="Обратиться за поддержкой" subtitle="Оставьте заявку - мы свяжемся с вами и подберём удобный формат.">
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
             <form action={createBooking} className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
               <div className="grid gap-4">
@@ -408,12 +410,12 @@ export default async function HomePage() {
             <div className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
               <div className="text-base font-semibold text-gray-900">Как всё проходит</div>
               <div className="mt-2 text-sm leading-relaxed text-gray-700">
-                Мы ответим, уточним удобный способ связи и предложим варианты помощи — без давления и спешки.
+                Мы ответим, уточним удобный способ связи и предложим варианты помощи - без давления и спешки.
               </div>
 
               <div className="mt-6 grid gap-3">
                 {[
-                  { t: "1) Контакт", d: "Свяжемся по телефону или email — как вам удобнее." },
+                  { t: "1) Контакт", d: "Свяжемся по телефону или email - как вам удобнее." },
                   { t: "2) Подбор", d: "Подберём специалиста или формат поддержки." },
                   { t: "3) Поддержка", d: "Начнём с короткой встречи и бережного плана." },
                 ].map((x) => (
@@ -425,7 +427,7 @@ export default async function HomePage() {
               </div>
 
               <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50 p-4 text-xs leading-relaxed text-gray-700">
-                Если вам тяжело прямо сейчас — короткое сообщение тоже подойдёт. Можно без подробностей.
+                Если вам тяжело прямо сейчас - короткое сообщение тоже подойдёт. Можно без подробностей.
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -451,7 +453,7 @@ export default async function HomePage() {
               <div className="text-2xl font-semibold tracking-tight text-gray-900">
                 Поддержка рядом. Сделайте первый шаг.
               </div>
-              <div className="mt-2 text-sm leading-relaxed text-gray-700">Запрос — это уже движение к облегчению.</div>
+              <div className="mt-2 text-sm leading-relaxed text-gray-700">Запрос - это уже движение к облегчению.</div>
             </div>
 
             <div className="relative mt-6 md:mt-0">

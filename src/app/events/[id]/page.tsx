@@ -55,7 +55,7 @@ export default async function EventPage({ params }: { params: Params }) {
 
             <div className="mt-10 rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
               <div className="text-sm font-semibold text-gray-900">Хотите записаться?</div>
-              <div className="mt-1 text-xs text-gray-700">Оставьте заявку — мы свяжемся и подберём формат помощи.</div>
+              <div className="mt-1 text-xs text-gray-700">Оставьте заявку - мы свяжемся и подберём формат помощи.</div>
 
               <Link
                 href="/#book"

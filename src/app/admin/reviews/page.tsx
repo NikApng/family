@@ -143,7 +143,7 @@ export default async function AdminReviewsPage({
                 <div className="text-sm text-gray-800 line-clamp-3">{x.text}</div>
               </div>
 
-              <div className="col-span-1">{x.rating ?? "—"}</div>
+              <div className="col-span-1">{x.rating ?? "-"}</div>
 
               <div className="col-span-2 text-xs text-gray-600">
                 {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(x.createdAt)}

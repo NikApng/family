@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/prisma"
 
 export const siteTextDefaults = {
-  "home.hero.badge": "Про Семью, Про Единство",
+  "home.hero.badge": "Автономная некоммерческая организация \nПро Семью, Про Единство",
   "home.hero.title": "Вы не одни.\nМы рядом, чтобы поддержать вас.",
-  "home.hero.subtitle": "Психологическая поддержка для вас.",
+  "home.hero.subtitle": "Психологическая поддержка для гражданан и их семьей пострадавшим от боевых действий",
   "home.hero.ctaPrimary": "Обратитесь к нам прямо сейчас",
   "home.hero.ctaSecondary": "Что мы делаем",
 
   "home.what.title": "Что мы делаем",
-  "home.what.subtitle": "Основные направления поддержки — просто и по делу.",
+  "home.what.subtitle": "Основные направления поддержки - просто и по делу.",
   "home.what.card1.title": "Консультации психологов",
   "home.what.card1.description":
     "Индивидуальная поддержка онлайн или в другом удобном формате. Помогаем снизить тревогу, вернуть опору и ясность.",
@@ -26,27 +26,27 @@ export const siteTextDefaults = {
   "footer.help.href": "/support",
   "footer.admin.label": "Админ",
   "footer.emergency":
-    "Если вы чувствуете угрозу жизни или сильный кризис — пожалуйста, обратитесь в экстренные службы вашего региона.",
+    "Если вы чувствуете угрозу жизни или сильный кризис - пожалуйста, обратитесь в экстренные службы вашего региона.",
 } as const
 
 export type SiteTextKey = keyof typeof siteTextDefaults
 
 export const siteTextFields = [
-  { group: "Главная — первый экран", key: "home.hero.badge", label: "Бейдж над заголовком", type: "text" },
-  { group: "Главная — первый экран", key: "home.hero.title", label: "Заголовок (можно перенос строки)", type: "textarea" },
-  { group: "Главная — первый экран", key: "home.hero.subtitle", label: "Подзаголовок", type: "text" },
-  { group: "Главная — первый экран", key: "home.hero.ctaPrimary", label: "Кнопка основная", type: "text" },
-  { group: "Главная — первый экран", key: "home.hero.ctaSecondary", label: "Кнопка вторичная", type: "text" },
+  { group: "Главная - первый экран", key: "home.hero.badge", label: "Бейдж над заголовком", type: "text" },
+  { group: "Главная - первый экран", key: "home.hero.title", label: "Заголовок (можно перенос строки)", type: "textarea" },
+  { group: "Главная - первый экран", key: "home.hero.subtitle", label: "Подзаголовок", type: "text" },
+  { group: "Главная - первый экран", key: "home.hero.ctaPrimary", label: "Кнопка основная", type: "text" },
+  { group: "Главная - первый экран", key: "home.hero.ctaSecondary", label: "Кнопка вторичная", type: "text" },
 
-  { group: "Главная — «Что мы делаем»", key: "home.what.title", label: "Заголовок секции", type: "text" },
-  { group: "Главная — «Что мы делаем»", key: "home.what.subtitle", label: "Подзаголовок секции", type: "text" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.title", label: "Заголовок секции", type: "text" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.subtitle", label: "Подзаголовок секции", type: "text" },
 
-  { group: "Главная — «Что мы делаем»", key: "home.what.card1.title", label: "Карточка 1: заголовок", type: "text" },
-  { group: "Главная — «Что мы делаем»", key: "home.what.card1.description", label: "Карточка 1: описание", type: "textarea" },
-  { group: "Главная — «Что мы делаем»", key: "home.what.card2.title", label: "Карточка 2: заголовок", type: "text" },
-  { group: "Главная — «Что мы делаем»", key: "home.what.card2.description", label: "Карточка 2: описание", type: "textarea" },
-  { group: "Главная — «Что мы делаем»", key: "home.what.card3.title", label: "Карточка 3: заголовок", type: "text" },
-  { group: "Главная — «Что мы делаем»", key: "home.what.card3.description", label: "Карточка 3: описание", type: "textarea" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.card1.title", label: "Карточка 1: заголовок", type: "text" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.card1.description", label: "Карточка 1: описание", type: "textarea" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.card2.title", label: "Карточка 2: заголовок", type: "text" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.card2.description", label: "Карточка 2: описание", type: "textarea" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.card3.title", label: "Карточка 3: заголовок", type: "text" },
+  { group: "Главная - «Что мы делаем»", key: "home.what.card3.description", label: "Карточка 3: описание", type: "textarea" },
 
   { group: "Футер", key: "footer.about", label: "Описание проекта", type: "textarea" },
   { group: "Футер", key: "footer.links.title", label: "Заголовок блока ссылок", type: "text" },

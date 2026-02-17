@@ -2,7 +2,7 @@ import { Section } from "@/components/Section"
 
 export default function SupportPage() {
     return (
-        <Section title="Помощь проекту" subtitle="Если вы хотите поддержать организацию — спасибо. Это действительно важно.">
+        <Section title="Помощь проекту" subtitle="Если вы хотите поддержать организацию - спасибо. Это действительно важно.">
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-2xl border border-border bg-card p-6">
                     <div className="text-lg font-semibold">Пожертвование</div>
