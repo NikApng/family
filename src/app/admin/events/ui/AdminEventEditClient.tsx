@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import UploadPhotoClient from "../../gallery/UploadPhotoClient"
+import { isValidImageUrl, normalizeImageUrl, safeImageSrc } from "@/lib/imageUrl"
 
 type EventItem = {
   id: string
@@ -24,23 +25,6 @@ type FormState = {
 
 function safeText(v: unknown) {
   return String(v ?? "").trim()
-}
-
-function isValidImageUrl(value: string) {
-  const v = safeText(value)
-  if (!v) return false
-
-  if (v.startsWith("/uploads/")) return true
-  if (v.startsWith("/images/")) return true
-  if (v.startsWith("http://")) return true
-  if (v.startsWith("https://")) return true
-
-  return false
-}
-
-function safeImageSrc(value: string | null) {
-  const v = safeText(value)
-  return isValidImageUrl(v) ? v : "/images/image.png"
 }
 
 async function apiJson<T>(input: RequestInfo, init?: RequestInit) {
@@ -108,7 +92,7 @@ export default function AdminEventEditClient({ id }: Props) {
         description: data.description,
         date: toDatetimeLocal(new Date(data.date)),
         place: data.place ?? "",
-        imageUrl: data.imageUrl ?? "",
+        imageUrl: normalizeImageUrl(data.imageUrl ?? ""),
       })
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка загрузки")
@@ -136,7 +120,7 @@ export default function AdminEventEditClient({ id }: Props) {
           description: safeText(form.description),
           date: new Date(form.date).toISOString(),
           place: safeText(form.place),
-          imageUrl: safeText(form.imageUrl),
+          imageUrl: normalizeImageUrl(form.imageUrl),
         }),
       })
 
@@ -201,7 +185,7 @@ export default function AdminEventEditClient({ id }: Props) {
         {isValidImageUrl(form.imageUrl) ? (
           <div className="mt-4 overflow-hidden rounded-2xl border border-indigo-100 bg-white">
             <div className="aspect-[16/9]">
-              <img src={safeImageSrc(form.imageUrl)} alt="" className="h-full w-full object-cover" />
+              <img src={safeImageSrc(form.imageUrl, "/images/image.png")} alt="" className="h-full w-full object-cover" />
             </div>
           </div>
         ) : null}
@@ -264,4 +248,3 @@ export default function AdminEventEditClient({ id }: Props) {
     </div>
   )
 }
-

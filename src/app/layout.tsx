@@ -7,6 +7,11 @@ import { SiteFooter } from "@/components/SiteFooter"
 export const metadata: Metadata = {
     title: "Про Семью, Про Единство",
     description: "Психологическая поддержка гражданам и их семьям.",
+    icons: {
+        icon: "/images/image.png",
+        shortcut: "/images/image.png",
+        apple: "/images/image.png",
+    },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

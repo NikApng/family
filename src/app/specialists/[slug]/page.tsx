@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
+import { safeImageSrc } from "@/lib/imageUrl"
 
 export const dynamic = "force-dynamic"
 
@@ -9,18 +10,6 @@ type Params = Promise<{ slug: string | string[] }>
 function toSlug(value: string | string[]) {
   if (Array.isArray(value)) return value[0] ?? ""
   return value ?? ""
-}
-
-function isValidImageUrl(value: string) {
-  const v = String(value ?? "").trim()
-  if (!v) return false
-
-  return v.startsWith("http://") || v.startsWith("https://") || v.startsWith("/uploads/") || v.startsWith("/images/")
-}
-
-function safeImageSrc(value: string | null) {
-  const v = String(value ?? "").trim()
-  return isValidImageUrl(v) ? v : "/images/PersonPhoto.png"
 }
 
 export default async function SpecialistPage({ params }: { params: Params }) {
@@ -34,6 +23,7 @@ export default async function SpecialistPage({ params }: { params: Params }) {
   })
 
   if (!specialist || !specialist.isPublished) notFound()
+  const photo = safeImageSrc(specialist.imageUrl, "/images/PersonPhoto.png")
 
   return (
     <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
@@ -43,22 +33,24 @@ export default async function SpecialistPage({ params }: { params: Params }) {
         </Link>
 
         <div className="mt-6 rounded-3xl border border-indigo-100 bg-white p-8 shadow-sm">
-          {specialist.imageUrl ? (
-            <div className="mb-6 overflow-hidden rounded-2xl border border-indigo-100 bg-white">
-              <div className="aspect-[16/9]">
-                <img src={safeImageSrc(specialist.imageUrl)} alt={specialist.name} className="h-full w-full object-cover" />
+          <div className="grid gap-6 md:grid-cols-[260px_1fr] md:items-start">
+            <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-b from-indigo-50 to-white">
+              <div className="aspect-[4/5]">
+                <img src={photo} alt={specialist.name} className="h-full w-full object-cover" />
               </div>
             </div>
-          ) : null}
 
-          <div className="text-sm text-gray-700">{specialist.role}</div>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-gray-900">{specialist.name}</h1>
+            <div>
+              <div className="text-sm text-gray-700">{specialist.role}</div>
+              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-gray-900">{specialist.name}</h1>
 
-          <div className="mt-4 inline-flex rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-            {specialist.badge}
+              <div className="mt-4 inline-flex rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
+                {specialist.badge}
+              </div>
+
+              <p className="mt-6 text-sm leading-relaxed text-gray-700">{specialist.bio}</p>
+            </div>
           </div>
-
-          <p className="mt-6 text-sm leading-relaxed text-gray-700">{specialist.bio}</p>
 
           <div className="mt-10 rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
             <div className="text-sm font-semibold text-gray-900">Хотите записаться?</div>

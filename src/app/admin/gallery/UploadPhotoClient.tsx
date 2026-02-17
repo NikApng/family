@@ -9,6 +9,19 @@ type Props = {
 type UploadResponse = {
   ok: boolean
   url?: string
+  error?: string
+}
+
+function uploadErrorMessage(code?: string, status?: number) {
+  if (code === "UNAUTHORIZED") return "Сессия истекла. Перезайдите в админку."
+  if (code === "FILE_REQUIRED") return "Сначала выберите файл."
+  if (code === "INVALID_FILE_TYPE") return "Разрешены только изображения."
+  if (code === "FILE_TOO_LARGE") return "Файл слишком большой. Лимит — 8 МБ."
+  if (code === "STORAGE_WRITE_FAILED") {
+    return "Сервер не смог сохранить файл. Используйте внешнюю ссылку (https://...) или настройте облачное хранилище."
+  }
+  if (status) return `Ошибка загрузки (HTTP ${status}).`
+  return "Ошибка загрузки."
 }
 
 export default function UploadPhotoClient({ targetInputId }: Props) {
@@ -42,10 +55,10 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
       fd.append("file", file)
 
       const res = await fetch("/api/upload", { method: "POST", body: fd })
-      const json = (await res.json()) as UploadResponse
+      const json = (await res.json().catch(() => null)) as UploadResponse | null
 
-      if (!json.ok || !json.url) {
-        setError("Не удалось загрузить файл")
+      if (!res.ok || !json?.ok || !json.url) {
+        setError(uploadErrorMessage(json?.error, res.status))
         return
       }
 
@@ -80,7 +93,7 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
           {isLoading ? "Загрузка..." : "Загрузить"}
         </button>
 
-        <div className="text-xs text-gray-600">Файл сохранится в public/uploads</div>
+        <div className="text-xs text-gray-600">Файл сохранится в хранилище сервера и будет доступен по /uploads/...</div>
       </div>
 
       {error ? <div className="mt-2 text-xs font-semibold text-rose-700">{error}</div> : null}

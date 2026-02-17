@@ -1,19 +1,8 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import { safeImageSrc } from "@/lib/imageUrl"
 
 export const dynamic = "force-dynamic"
-
-function isValidImageUrl(value: string) {
-  const v = String(value ?? "").trim()
-  if (!v) return false
-
-  return v.startsWith("http://") || v.startsWith("https://") || v.startsWith("/uploads/") || v.startsWith("/images/")
-}
-
-function safeImageSrc(value: string | null) {
-  const v = String(value ?? "").trim()
-  return isValidImageUrl(v) ? v : "/images/image.png"
-}
 
 export default async function EventsPage() {
   const now = new Date()
@@ -47,7 +36,7 @@ export default async function EventsPage() {
               className="group overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
             >
               <div className="aspect-[16/9] border-b border-indigo-100 bg-white">
-                <img src={safeImageSrc(e.imageUrl)} alt={e.title} className="h-full w-full object-cover" />
+                <img src={safeImageSrc(e.imageUrl, "/images/image.png")} alt={e.title} className="h-full w-full object-cover" />
               </div>
 
               <div className="p-6">
@@ -80,7 +69,7 @@ export default async function EventsPage() {
                 className="group overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
               >
                 <div className="aspect-[16/9] border-b border-indigo-100 bg-white">
-                  <img src={safeImageSrc(e.imageUrl)} alt={e.title} className="h-full w-full object-cover" />
+                  <img src={safeImageSrc(e.imageUrl, "/images/image.png")} alt={e.title} className="h-full w-full object-cover" />
                 </div>
 
                 <div className="p-6">

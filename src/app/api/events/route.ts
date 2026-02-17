@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { eventSchema } from "@/lib/validators"
+import { normalizeImageUrl } from "@/lib/imageUrl"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
       description: parsed.data.description.trim(),
       date: parsed.data.date,
       place: (parsed.data.place ?? "").trim() || null,
-      imageUrl: (parsed.data.imageUrl ?? "").trim() || null,
+      imageUrl: normalizeImageUrl(parsed.data.imageUrl) || null,
     },
   })
 

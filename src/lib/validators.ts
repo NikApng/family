@@ -1,11 +1,5 @@
 import { z } from "zod"
-
-function isValidImageUrl(value: string) {
-  const v = String(value ?? "").trim()
-  if (!v) return false
-
-  return v.startsWith("http://") || v.startsWith("https://") || v.startsWith("/uploads/") || v.startsWith("/images/")
-}
+import { isValidImageUrl } from "@/lib/imageUrl"
 
 const imageUrlMessage = "Укажи корректный URL: https://... или /uploads/... или /images/..."
 

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { mkdir, writeFile } from "fs/promises"
 import path from "path"
 import crypto from "crypto"
+import { getUploadPublicUrl, getUploadsDir } from "@/lib/uploadsStorage"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -46,15 +47,19 @@ export async function POST(req: Request) {
   const extCandidate = extFromName || (extFromMime ? `.${extFromMime}` : "")
   const ext = allowedExt.has(extCandidate) ? extCandidate : ".png"
 
-  const uploadsDir = path.join(process.cwd(), "public", "uploads")
-  await mkdir(uploadsDir, { recursive: true })
+  try {
+    const uploadsDir = getUploadsDir()
+    await mkdir(uploadsDir, { recursive: true })
 
-  const filename = `${crypto.randomUUID()}${ext}`
-  const filePath = path.join(uploadsDir, filename)
+    const filename = `${crypto.randomUUID()}${ext}`
+    const filePath = path.join(uploadsDir, filename)
 
-  const bytes = await file.arrayBuffer()
-  await writeFile(filePath, Buffer.from(bytes))
+    const bytes = await file.arrayBuffer()
+    await writeFile(filePath, Buffer.from(bytes))
 
-  return NextResponse.json({ ok: true, url: `/uploads/${filename}` }, { status: 201 })
+    return NextResponse.json({ ok: true, url: getUploadPublicUrl(filename) }, { status: 201 })
+  } catch (err) {
+    console.error("Failed to save uploaded file", err)
+    return NextResponse.json({ ok: false, error: "STORAGE_WRITE_FAILED" }, { status: 500 })
+  }
 }
-

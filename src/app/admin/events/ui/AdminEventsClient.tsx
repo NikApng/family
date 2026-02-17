@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import UploadPhotoClient from "../../gallery/UploadPhotoClient"
+import { isValidImageUrl, normalizeImageUrl, safeImageSrc } from "@/lib/imageUrl"
 
 type EventItem = {
   id: string
@@ -25,23 +26,6 @@ type FormState = {
 
 function safeText(v: unknown) {
   return String(v ?? "").trim()
-}
-
-function isValidImageUrl(value: string) {
-  const v = safeText(value)
-  if (!v) return false
-
-  if (v.startsWith("/uploads/")) return true
-  if (v.startsWith("/images/")) return true
-  if (v.startsWith("http://")) return true
-  if (v.startsWith("https://")) return true
-
-  return false
-}
-
-function safeImageSrc(value: string | null) {
-  const v = safeText(value)
-  return isValidImageUrl(v) ? v : "/images/image.png"
 }
 
 async function apiJson<T>(input: RequestInfo, init?: RequestInit) {
@@ -124,7 +108,7 @@ export default function AdminEventsClient() {
           description: safeText(form.description),
           date: new Date(form.date).toISOString(),
           place: safeText(form.place),
-          imageUrl: safeText(form.imageUrl),
+          imageUrl: normalizeImageUrl(form.imageUrl),
         }),
       })
 
@@ -211,7 +195,7 @@ export default function AdminEventsClient() {
           {isValidImageUrl(form.imageUrl) ? (
             <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white">
               <div className="aspect-[16/9]">
-                <img src={safeImageSrc(form.imageUrl)} alt="" className="h-full w-full object-cover" />
+                <img src={safeImageSrc(form.imageUrl, "/images/image.png")} alt="" className="h-full w-full object-cover" />
               </div>
             </div>
           ) : null}
@@ -237,7 +221,7 @@ export default function AdminEventsClient() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex min-w-0 items-start gap-4">
                   <div className="h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-indigo-100 bg-white">
-                    <img src={safeImageSrc(e.imageUrl)} alt="" className="h-full w-full object-cover" />
+                    <img src={safeImageSrc(e.imageUrl, "/images/image.png")} alt="" className="h-full w-full object-cover" />
                   </div>
 
                   <div className="min-w-0">
@@ -276,4 +260,3 @@ export default function AdminEventsClient() {
     </div>
   )
 }
-
