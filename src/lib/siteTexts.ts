@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 
+let siteTextLoadErrorLogged = false
+
 export const siteTextDefaults = {
   "home.hero.badge": "Автономная некоммерческая организация \nПро Семью, Про Единство",
   "home.hero.title": "Вы не одни.\nМы рядом, чтобы поддержать вас.",
@@ -69,6 +71,8 @@ export async function getSiteTexts(keys?: readonly SiteTextKey[]) {
   const out: Record<string, string> = {}
   for (const key of requested) out[key] = siteTextDefaults[key]
 
+  if (!process.env.DATABASE_URL) return out
+
   const siteTextModel = (prisma as any).siteText as { findMany?: unknown } | undefined
   if (typeof siteTextModel?.findMany !== "function") return out
 
@@ -79,9 +83,11 @@ export async function getSiteTexts(keys?: readonly SiteTextKey[]) {
 
     for (const item of items) out[item.key] = item.value
   } catch (err) {
-    console.error("Failed to load SiteText records", err)
+    if (!siteTextLoadErrorLogged) {
+      siteTextLoadErrorLogged = true
+      console.error("Failed to load SiteText records", err)
+    }
   }
 
   return out as Record<string, string>
 }
-
