@@ -1,8 +1,9 @@
 import Image from "next/image"
 import Link from "next/link"
 // import { revalidatePath } from "next/cache"
-// import { prisma } from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 // import { bookingSchema } from "@/lib/validators"
+// import { PersonalDataConsent } from "@/components/PersonalDataConsent"
 import { getSiteTexts } from "@/lib/siteTexts"
 import { Section } from "@/components/Section"
 import PersonCard from "@/components/PersonCard"
@@ -19,6 +20,7 @@ async function createBooking(formData: FormData) {
     phone: String(formData.get("phone") ?? ""),
     email: String(formData.get("email") ?? ""),
     message: String(formData.get("message") ?? ""),
+    personalDataConsent: String(formData.get("personalDataConsent") ?? ""),
   }
 
   const parsed = bookingSchema.safeParse(raw)
@@ -423,6 +425,8 @@ export default async function HomePage() {
                   placeholder="Коротко опишите ситуацию (необязательно)"
                   className="min-h-32 rounded-md border border-gray-200 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                 />
+
+                <PersonalDataConsent />
 
                 <button className="h-11 rounded-md bg-indigo-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow">
                   Отправить заявку

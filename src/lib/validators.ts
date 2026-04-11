@@ -8,6 +8,12 @@ export const bookingSchema = z.object({
   phone: z.string().min(1),
   email: z.string().email().optional().or(z.literal("")),
   message: z.string().optional().or(z.literal("")),
+  personalDataConsent: z.preprocess((v) => {
+    if (typeof v === "boolean") return v
+
+    const str = String(v ?? "").trim().toLowerCase()
+    return str === "true" || str === "on" || str === "1"
+  }, z.boolean().refine((v) => v, "Необходимо согласие на обработку персональных данных")),
 })
 
 export const eventSchema = z.object({
@@ -67,10 +73,18 @@ const isAnonymousSchema = z.preprocess((v) => {
   return false
 }, z.boolean())
 
+const personalDataConsentSchema = z.preprocess((v) => {
+  if (typeof v === "boolean") return v
+
+  const str = String(v ?? "").trim().toLowerCase()
+  return str === "true" || str === "on" || str === "1"
+}, z.boolean().refine((v) => v, "Необходимо согласие на обработку персональных данных"))
+
 export const reviewCreateSchema = z.object({
   text: z.string().trim().min(20).max(1000),
   name: z.string().trim().max(60).optional().or(z.literal("")),
   isAnonymous: isAnonymousSchema.optional().default(false),
   rating: ratingSchema.optional().default(null),
   website: z.string().optional().or(z.literal("")),
+  personalDataConsent: personalDataConsentSchema,
 })

@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
+import { PersonalDataConsent } from "@/components/PersonalDataConsent"
 
 // type ApiResult = { ok: true } | { ok: false; error?: string }
 
@@ -35,6 +36,7 @@ export function ReviewForm() {
         rating: safeText(formData.get("rating")) ? Number(safeText(formData.get("rating"))) : null,
         isAnonymous: safeText(formData.get("isAnonymous")) === "true",
         website: safeText(formData.get("website")),
+        personalDataConsent: safeText(formData.get("personalDataConsent")) === "true",
       }
 
       const res = await fetch("/api/reviews", {
@@ -131,6 +133,8 @@ export function ReviewForm() {
         />
         Публиковать анонимно
       </label>
+
+      <PersonalDataConsent />
 
       <div className="absolute left-[-9999px] top-[-9999px]" aria-hidden>
         <label>

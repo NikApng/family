@@ -1,11 +1,10 @@
 import Link from "next/link"
 import Image from "next/image"
 import { getSiteTexts } from "@/lib/siteTexts"
+import { PERSONAL_DATA_PAGE_HREF } from "@/lib/personalData"
 
 
 export async function SiteFooter() {
-    const showDevAdminLink = process.env.NODE_ENV === "development"
-
     const t = await getSiteTexts([
         "footer.about",
         "footer.links.title",
@@ -65,6 +64,14 @@ export async function SiteFooter() {
                                     className="text-gray-600 hover:text-indigo-700"
                                 >
                                     {t["footer.help.label"]}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href={PERSONAL_DATA_PAGE_HREF}
+                                    className="text-gray-600 hover:text-indigo-700"
+                                >
+                                    Политика обработки персональных данных
                                 </Link>
                             </li>
                             {/* {showDevAdminLink ? (
