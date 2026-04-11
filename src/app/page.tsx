@@ -266,12 +266,12 @@ export default async function HomePage() {
                     <div className="absolute -right-12 bottom-8 h-36 w-36 rounded-full bg-rose-200/35 blur-2xl" />
                     <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 blur-3xl" />
                   </div>
-                  <div className="relative flex h-full items-center justify-center p-8 md:p-10">
+                  <div className="relative h-full overflow-hidden">
                     <SiteLogo
                       priority
                       quality={100}
                       sizes="(min-width: 768px) 36vw, 84vw"
-                      className="h-full w-auto max-w-[76%] drop-shadow-[0_20px_34px_rgba(79,70,229,0.14)]"
+                      className="h-full w-full scale-[1.06] object-cover object-center drop-shadow-[0_24px_38px_rgba(79,70,229,0.14)]"
                     />
                   </div>
                 </div>
