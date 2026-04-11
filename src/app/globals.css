@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
 html {
-    scrollbar-gutter: stable;
+    overflow-y: scroll;
+}
+
+body {
+    overflow-x: clip;
 }
 
 :root {
