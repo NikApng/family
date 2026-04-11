@@ -24,7 +24,7 @@ export function SiteLogo({
       priority={priority}
       quality={quality}
       sizes={sizes}
-      className={["h-auto w-full object-contain", className].filter(Boolean).join(" ")}
+      className={["h-full w-full ", className].filter(Boolean).join(" ")}
     />
   )
 }
