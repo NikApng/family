@@ -10,7 +10,7 @@ export default async function ReviewsSection() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-sm text-gray-600">Показываем только подтверждённые отзывы.</div>
+        <div className="text-sm text-gray-600">Показываем только подтверждённые отзывы. Приём новых отзывов через сайт отключён.</div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/reviews"
@@ -18,12 +18,14 @@ export default async function ReviewsSection() {
           >
             Все отзывы
           </Link>
+          {/*
           <Link
             href="/reviews/new"
             className="inline-flex h-11 items-center justify-center rounded-md bg-indigo-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow"
           >
             Оставить отзыв
           </Link>
+          */}
         </div>
       </div>
 
@@ -49,4 +51,3 @@ export default async function ReviewsSection() {
     </div>
   )
 }
-

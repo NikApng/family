@@ -2,11 +2,11 @@
 
 import { useRef, useState } from "react"
 
-type ApiResult = { ok: true } | { ok: false; error?: string }
+// type ApiResult = { ok: true } | { ok: false; error?: string }
 
-function safeText(v: FormDataEntryValue | null) {
-  return String(v ?? "").trim()
-}
+// function safeText(v: FormDataEntryValue | null) {
+//   return String(v ?? "").trim()
+// }
 
 export function ReviewForm() {
   const formRef = useRef<HTMLFormElement | null>(null)
@@ -21,6 +21,12 @@ export function ReviewForm() {
     setStatus(null)
 
     try {
+      setStatus({
+        ok: false,
+        message: "В целях приватности отправка отзывов через сайт отключена.",
+      })
+
+      /*
       const formData = new FormData(e.currentTarget)
 
       const payload = {
@@ -53,8 +59,9 @@ export function ReviewForm() {
 
       formRef.current?.reset()
       setStatus({ ok: true })
+      */
     } catch {
-      setStatus({ ok: false, message: "Не удалось отправить отзыв. Попробуйте позже." })
+      setStatus({ ok: false, message: "В целях приватности отправка отзывов через сайт отключена." })
     } finally {
       setIsSubmitting(false)
     }
@@ -141,4 +148,3 @@ export function ReviewForm() {
     </form>
   )
 }
-

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import { revalidatePath } from "next/cache"
-import { prisma } from "@/lib/prisma"
-import { reviewCreateSchema } from "@/lib/validators"
-import { hashIp } from "@/lib/security/ipHash"
+// import type { NextRequest } from "next/server"
+// import { revalidatePath } from "next/cache"
+// import { prisma } from "@/lib/prisma"
+// import { reviewCreateSchema } from "@/lib/validators"
+// import { hashIp } from "@/lib/security/ipHash"
 
+/*
 function getClientIp(req: NextRequest) {
   const direct = (req as unknown as { ip?: string }).ip
   if (direct) return direct.trim()
@@ -33,9 +34,13 @@ async function readBody(req: NextRequest) {
 
   return (await req.json()) as unknown
 }
+*/
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
+    return NextResponse.json({ ok: false, error: "disabled" }, { status: 503 })
+
+    /*
     const raw = await readBody(req)
 
     const website =
@@ -76,6 +81,7 @@ export async function POST(req: NextRequest) {
     revalidatePath("/admin/reviews")
 
     return NextResponse.json({ ok: true })
+    */
   } catch {
     return NextResponse.json({ ok: false, error: "server_error" })
   }

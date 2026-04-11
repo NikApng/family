@@ -1,8 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
-import { revalidatePath } from "next/cache"
-import { prisma } from "@/lib/prisma"
-import { bookingSchema } from "@/lib/validators"
+// import { revalidatePath } from "next/cache"
+// import { prisma } from "@/lib/prisma"
+// import { bookingSchema } from "@/lib/validators"
 import { getSiteTexts } from "@/lib/siteTexts"
 import { Section } from "@/components/Section"
 import PersonCard from "@/components/PersonCard"
@@ -10,6 +10,7 @@ import ReviewsSection from "@/components/Reviews/ReviewsSection"
 
 export const dynamic = "force-dynamic"
 
+/*
 async function createBooking(formData: FormData) {
   "use server"
 
@@ -26,6 +27,7 @@ async function createBooking(formData: FormData) {
   await prisma.bookingRequest.create({ data: parsed.data })
   revalidatePath("/")
 }
+*/
 
 type UiLinkProps = {
   href: string
@@ -334,7 +336,7 @@ export default async function HomePage() {
       </BackdropSection>
 
       <BackdropSection id="reviews" variant="c">
-        <Section title="Отзывы клиентов" subtitle="Реальные истории благодарности - можно публиковать анонимно.">
+        <Section title="Отзывы клиентов" subtitle="Показываем только ранее подтверждённые отзывы.">
           <ReviewsSection />
         </Section>
       </BackdropSection>
@@ -377,8 +379,22 @@ export default async function HomePage() {
       </BackdropSection>
 
       <BackdropSection id="book" variant="a">
-        <Section title="Обратиться за поддержкой" subtitle="Оставьте заявку - мы свяжемся с вами и подберём удобный формат.">
+        <Section title="Обратиться за поддержкой" subtitle="В целях приватности сбор персональных данных через сайт отключён. Используйте прямые контакты.">
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+            <div className="rounded-3xl border border-amber-100 bg-amber-50 p-7 shadow-sm">
+              <div className="text-base font-semibold text-gray-900">Онлайн-заявка отключена</div>
+              <div className="mt-2 text-sm leading-relaxed text-gray-700">
+                Через сайт больше не отправляются имя, телефон, email и текст сообщения. Для связи используйте раздел
+                контактов и удобный для вас прямой способ обращения.
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <GhostLink href="/contacts">Открыть контакты</GhostLink>
+                <GhostLink href="/faq">Частые вопросы</GhostLink>
+              </div>
+            </div>
+
+            {/*
             <form action={createBooking} className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
               <div className="grid gap-4">
                 <div className="grid gap-4 md:grid-cols-2">
@@ -417,6 +433,7 @@ export default async function HomePage() {
                 </div>
               </div>
             </form>
+            */}
 
             <div className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
               <div className="text-base font-semibold text-gray-900">Как всё проходит</div>

@@ -1,5 +1,4 @@
 import { Section } from "@/components/Section"
-import Link from "next/link"
 
 const CONTACT_PHONE = "+7 920 253-17-77"
 const CONTACT_PHONE_TEL = "+79202531777"
@@ -54,7 +53,7 @@ export default function ContactsPage() {
               <div className="text-sm text-gray-600">Часы работы</div>
             </div>
             <div className="mt-3 text-lg font-semibold text-gray-900">Пн–Пт 10:00–19:00</div>
-            <div className="mt-1 text-xs text-gray-500">Онлайн-заявки - круглосуточно</div>
+            <div className="mt-1 text-xs text-gray-500">Телефон и email доступны без формы на сайте</div>
           </div>
 
           <div className="rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm transition hover:border-indigo-200 hover:shadow-md">
@@ -73,8 +72,8 @@ export default function ContactsPage() {
           <div className="rounded-3xl border border-amber-100 bg-amber-50 p-6 text-sm leading-relaxed text-gray-700">
             <div className="text-base font-semibold text-gray-900">Если говорить трудно</div>
             <p className="mt-2">
-              Вы можете написать нам на почту или оставить короткое сообщение. Необязательно
-              подробно описывать ситуацию - мы аккуратно уточним всё сами.
+              Вы можете написать нам на почту или позвонить. Необязательно подробно описывать ситуацию - мы аккуратно
+              уточним всё сами без формы на сайте.
             </p>
             <p className="mt-3 text-xs text-gray-600">
               Мы не передаём ваши данные третьим лицам.
@@ -87,7 +86,7 @@ export default function ContactsPage() {
               {[
                 { t: "Телефон", d: "Сразу или в течение рабочего дня" },
                 { t: "Email", d: "Обычно в течение 24 часов" },
-                { t: "Форма на сайте", d: "Свяжемся удобным для вас способом" },
+                { t: "Через сайт", d: "Веб-формы отключены в целях приватности" },
               ].map((x) => (
                 <div
                   key={x.t}
@@ -107,18 +106,18 @@ export default function ContactsPage() {
               Нужна поддержка прямо сейчас?
             </div>
             <div className="mt-2 max-w-xl  text-sm leading-relaxed text-gray-600">
-              Вы можете оставить заявку - мы свяжемся с вами и предложим подходящий
-              формат помощи.
+              Позвоните или напишите на email. Публичные формы на сайте отключены, чтобы не собирать персональные
+              данные через веб-интерфейс.
             </div>
           </div>
 
           <div className="mt-6 md:mt-0">
-            <Link
-              href="/#book"
+            <a
+              href={`tel:${CONTACT_PHONE_TEL}`}
               className="inline-flex h-11 items-center justify-center rounded-md bg-indigo-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow"
             >
-              Обратиться за поддержкой
-            </Link>
+              Позвонить
+            </a>
           </div>
         </div>
       </Section>

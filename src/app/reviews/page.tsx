@@ -14,7 +14,7 @@ export default async function ReviewsPage() {
     <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <Section title="Отзывы клиентов" subtitle="Здесь показываем только подтверждённые отзывы.">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="text-sm text-gray-600">Хотите поделиться впечатлением?</div>
+          <div className="text-sm text-gray-600">Новые отзывы через сайт сейчас не принимаются.</div>
           <div className="flex flex-wrap items-center gap-2">
             <Link
               href="/"
@@ -22,12 +22,14 @@ export default async function ReviewsPage() {
             >
               На главную
             </Link>
+            {/*
             <Link
               href="/reviews/new"
               className="inline-flex h-11 items-center justify-center rounded-md bg-indigo-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow"
             >
               Оставить отзыв
             </Link>
+            */}
           </div>
         </div>
 
