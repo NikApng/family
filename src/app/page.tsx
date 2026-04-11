@@ -1,9 +1,9 @@
-import Image from "next/image"
 import Link from "next/link"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { bookingSchema } from "@/lib/validators"
 import { PersonalDataConsent } from "@/components/PersonalDataConsent"
+import { SiteLogo } from "@/components/SiteLogo"
 import { getSiteTexts } from "@/lib/siteTexts"
 import { Section } from "@/components/Section"
 import PersonCard from "@/components/PersonCard"
@@ -254,14 +254,26 @@ export default async function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-tr from-indigo-50/60 via-white to-rose-50/50" />
 
               <div className="relative p-4 md:p-5">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-indigo-100 bg-white">
-                  <Image
-                    src="/images/PersonPhoto.png"
+                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-white via-indigo-50/70 to-rose-50/50">
+                  {/*
                     alt="Семья рядом друг с другом"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+                    <div className="absolute -right-12 bottom-8 h-36 w-36 rounded-full bg-rose-200/35 blur-2xl" />
+                    <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 blur-3xl" />
+                  </div>
+                  */}
+                  <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute -left-10 top-10 h-32 w-32 rounded-full bg-indigo-200/35 blur-2xl" />
+                    <div className="absolute -right-12 bottom-8 h-36 w-36 rounded-full bg-rose-200/35 blur-2xl" />
+                    <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 blur-3xl" />
+                  </div>
+                  <div className="relative flex h-full items-center justify-center p-8 md:p-10">
+                    <SiteLogo
+                      priority
+                      quality={100}
+                      sizes="(min-width: 768px) 36vw, 84vw"
+                      className="h-full w-auto max-w-[76%] drop-shadow-[0_20px_34px_rgba(79,70,229,0.14)]"
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
