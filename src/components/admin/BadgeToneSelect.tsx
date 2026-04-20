@@ -60,9 +60,7 @@ export function BadgeToneSelect({ defaultValue = "indigo", name = "badgeTone" }:
             isOpen ? "translate-y-0.5 rotate-[225deg]" : "-translate-y-0.5",
           ].join(" ")}
           aria-hidden
-        >
-          {" "}
-        </span>
+        />
       </button>
 
       {isOpen ? (
