@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import UploadPhotoClient from "../UploadPhotoClient"
 
 type PhotoReport = {
@@ -16,6 +16,9 @@ type FormState = {
   title: string
   imageUrl: string
 }
+
+const fieldClass =
+  "h-11 w-full rounded-md border border-indigo-100 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
 
 function safeText(v: unknown) {
   return String(v ?? "").trim()
@@ -46,7 +49,7 @@ export default function AdminGalleryEditClient({ id }: { id: string }) {
     return safeText(form.title).length > 0 && safeText(form.imageUrl).length > 0
   }, [form])
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     try {
@@ -58,12 +61,12 @@ export default function AdminGalleryEditClient({ id }: { id: string }) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [id])
 
   useEffect(() => {
     if (!id) return
     void load()
-  }, [id])
+  }, [id, load])
 
   const onSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -143,20 +146,37 @@ export default function AdminGalleryEditClient({ id }: { id: string }) {
 
           <UploadPhotoClient targetInputId="imageUrl" />
 
-          <form onSubmit={onSave} className="mt-4 grid gap-3">
-            <input
-              value={form.title}
-              onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-              className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-              required
-            />
-            <input
-              id="imageUrl"
-              value={form.imageUrl}
-              onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))}
-              className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-              required
-            />
+          <form onSubmit={onSave} className="mt-4 grid gap-5">
+            <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+              <div className="text-base font-semibold text-gray-900">1. Карточка фотоотчёта</div>
+              <div className="mt-1 text-sm text-gray-600">
+                Название и изображение появятся в галерее на странице фотоотчётов.
+              </div>
+
+              <div className="mt-4 grid gap-4">
+                <div className="grid gap-2">
+                  <div className="text-sm font-semibold text-gray-900">Название</div>
+                  <input
+                    value={form.title}
+                    onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                    className={fieldClass}
+                    required
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <div className="text-sm font-semibold text-gray-900">Изображение</div>
+                  <input
+                    id="imageUrl"
+                    value={form.imageUrl}
+                    onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))}
+                    className={fieldClass}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
             <button
               disabled={!canSubmit || isSaving}
               className="h-11 rounded-md bg-indigo-600 px-6 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"

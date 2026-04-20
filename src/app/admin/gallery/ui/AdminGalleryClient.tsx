@@ -17,6 +17,9 @@ type FormState = {
   imageUrl: string
 }
 
+const fieldClass =
+  "h-11 w-full rounded-md border border-indigo-100 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
+
 function safeText(v: unknown) {
   return String(v ?? "").trim()
 }
@@ -127,22 +130,37 @@ export default function AdminGalleryClient() {
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit} className="mt-4 grid gap-3 md:max-w-2xl">
-          <input
-            value={form.title}
-            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-            placeholder="Название"
-            className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-            required
-          />
-          <input
-            id="imageUrl"
-            value={form.imageUrl}
-            onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))}
-            placeholder="URL картинки (https://… или /uploads/… или /images/…)"
-            className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-            required
-          />
+        <form onSubmit={onSubmit} className="mt-4 grid gap-5">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+            <div className="text-base font-semibold text-gray-900">1. Карточка фотоотчёта</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Название и изображение появятся в галерее на странице фотоотчётов.
+            </div>
+
+            <div className="mt-4 grid gap-4">
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-gray-900">Название</div>
+                <input
+                  value={form.title}
+                  onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                  className={fieldClass}
+                  required
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-gray-900">Изображение</div>
+                <input
+                  id="imageUrl"
+                  value={form.imageUrl}
+                  onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))}
+                  placeholder="https://... или /uploads/... или /images/..."
+                  className={fieldClass}
+                  required
+                />
+              </div>
+            </div>
+          </div>
 
           {!isValidImageUrl(form.imageUrl) && safeText(form.imageUrl).length > 0 ? (
             <div className="text-xs font-semibold text-rose-700">

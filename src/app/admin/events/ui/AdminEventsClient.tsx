@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
 import UploadPhotoClient from "../../gallery/UploadPhotoClient"
 import { isValidImageUrl, normalizeImageUrl, safeImageSrc } from "@/lib/imageUrl"
@@ -23,6 +24,12 @@ type FormState = {
   place: string
   imageUrl: string
 }
+
+const fieldClass =
+  "h-11 w-full rounded-md border border-indigo-100 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
+
+const textareaClass =
+  "w-full rounded-md border border-indigo-100 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
 
 function safeText(v: unknown) {
   return String(v ?? "").trim()
@@ -145,46 +152,75 @@ export default function AdminEventsClient() {
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit} className="mt-4 grid gap-3 md:max-w-3xl">
-          <input
-            value={form.title}
-            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-            placeholder="Название"
-            className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-            required
-          />
+        <form onSubmit={onSubmit} className="mt-4 grid gap-5">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+            <div className="text-base font-semibold text-gray-900">1. Карточка в афише</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Это увидят в списке мероприятий: название, дата, место и обложка.
+            </div>
 
-          <textarea
-            value={form.description}
-            onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-            placeholder="Описание"
-            className="min-h-28 rounded-md border border-indigo-100 bg-white px-3 py-3 text-sm outline-none focus:border-indigo-300"
-            required
-          />
+            <div className="mt-4 grid gap-4">
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-gray-900">Название</div>
+                <input
+                  value={form.title}
+                  onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                  className={fieldClass}
+                  required
+                />
+              </div>
 
-          <div className="grid gap-3 md:grid-cols-2">
-            <input
-              type="datetime-local"
-              value={form.date}
-              onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
-              className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-              required
-            />
-            <input
-              value={form.place}
-              onChange={(e) => setForm((p) => ({ ...p, place: e.target.value }))}
-              placeholder="Место (необязательно)"
-              className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-            />
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <div className="text-sm font-semibold text-gray-900">Дата и время</div>
+                  <input
+                    type="datetime-local"
+                    value={form.date}
+                    onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
+                    className={fieldClass}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <div className="text-sm font-semibold text-gray-900">Место</div>
+                  <input
+                    value={form.place}
+                    onChange={(e) => setForm((p) => ({ ...p, place: e.target.value }))}
+                    placeholder="Необязательно"
+                    className={fieldClass}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-gray-900">Обложка</div>
+                <input
+                  id="imageUrl"
+                  value={form.imageUrl}
+                  onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))}
+                  placeholder="https://... или /uploads/... или /images/..."
+                  className={fieldClass}
+                />
+              </div>
+            </div>
           </div>
 
-          <input
-            id="imageUrl"
-            value={form.imageUrl}
-            onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))}
-            placeholder="URL картинки (https://… или /uploads/… или /images/…)"
-            className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
-          />
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+            <div className="text-base font-semibold text-gray-900">2. Страница мероприятия</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Полное описание показывается после открытия карточки мероприятия.
+            </div>
+
+            <div className="mt-4 grid gap-2">
+              <div className="text-sm font-semibold text-gray-900">Описание</div>
+              <textarea
+                value={form.description}
+                onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+                className={`${textareaClass} min-h-32`}
+                required
+              />
+            </div>
+          </div>
 
           {!isValidImageUrl(form.imageUrl) && safeText(form.imageUrl).length > 0 ? (
             <div className="text-xs font-semibold text-rose-700">
@@ -194,8 +230,8 @@ export default function AdminEventsClient() {
 
           {isValidImageUrl(form.imageUrl) ? (
             <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white">
-              <div className="aspect-[16/9]">
-                <img src={safeImageSrc(form.imageUrl, "/images/image.png")} alt="" className="h-full w-full object-cover" />
+              <div className="relative aspect-[16/9]">
+                <Image src={safeImageSrc(form.imageUrl, "/images/image.png")} alt="" fill className="object-cover" />
               </div>
             </div>
           ) : null}
@@ -220,8 +256,8 @@ export default function AdminEventsClient() {
             <div key={e.id} className="rounded-2xl border border-indigo-100 p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex min-w-0 items-start gap-4">
-                  <div className="h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-indigo-100 bg-white">
-                    <img src={safeImageSrc(e.imageUrl, "/images/image.png")} alt="" className="h-full w-full object-cover" />
+                  <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border border-indigo-100 bg-white">
+                    <Image src={safeImageSrc(e.imageUrl, "/images/image.png")} alt="" fill className="object-cover" />
                   </div>
 
                   <div className="min-w-0">

@@ -87,7 +87,13 @@ export default function AdminSpecialistsNewPage() {
         <div className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
           <UploadPhotoClient targetInputId="imageUrl" />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+            <div className="text-base font-semibold text-gray-900">1. Карточка специалиста на сайте</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Эти данные видны в списке специалистов: имя, роль, бейдж, фото и короткое описание.
+            </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
             <div className="grid gap-2">
               <div className="text-sm font-semibold text-gray-900">Имя</div>
               <input
@@ -170,14 +176,22 @@ export default function AdminSpecialistsNewPage() {
               required
             />
           </div>
+          </div>
 
-          <div className="mt-4 grid gap-2">
-            <div className="text-sm font-semibold text-gray-900">Полное описание (на странице специалиста)</div>
-            <textarea
-              name="bio"
-              className="min-h-40 rounded-md border border-indigo-100 px-3 py-3 text-sm outline-none focus:border-indigo-300"
-              required
-            />
+          <div className="mt-5 rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+            <div className="text-base font-semibold text-gray-900">2. Страница специалиста</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Полное описание откроется после перехода в карточку специалиста.
+            </div>
+
+            <div className="mt-4 grid gap-2">
+              <div className="text-sm font-semibold text-gray-900">Полное описание</div>
+              <textarea
+                name="bio"
+                className="min-h-40 rounded-md border border-indigo-100 px-3 py-3 text-sm outline-none focus:border-indigo-300"
+                required
+              />
+            </div>
           </div>
 
           <label className="mt-4 inline-flex items-center gap-2 text-sm text-gray-900">

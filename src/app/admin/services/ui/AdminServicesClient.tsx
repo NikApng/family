@@ -206,66 +206,79 @@ export default function AdminServicesClient() {
           </div>
         ) : null}
 
-        <form onSubmit={onSubmit} className="mt-6 grid gap-4 md:max-w-3xl">
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="grid gap-2">
-              <div className="text-sm font-semibold text-gray-900">Ссылка</div>
-              <input
-                value={form.slug}
-                onChange={(e) => setForm((p) => ({ ...p, slug: normalizeSlug(e.target.value) }))}
-                onBlur={() => setForm((p) => ({ ...p, slug: normalizeSlug(p.slug) }))}
-                placeholder="online"
-                className={fieldClass}
-                required
-              />
-              <div className="text-xs text-gray-500">
-                Адрес будет: /services/{normalizeSlug(form.slug) || "..."}; используйте латиницу.
+        <form onSubmit={onSubmit} className="mt-6 grid gap-5">
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+            <div className="text-base font-semibold text-gray-900">1. Карточка услуги на сайте</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Эти поля видны в списке услуг и помогают посетителю выбрать подходящее направление.
+            </div>
+
+            <div className="mt-4 grid items-start gap-4 lg:grid-cols-2">
+              <div className="grid grid-rows-[auto_44px_auto] gap-2">
+                <div className="text-sm font-semibold text-gray-900">Ссылка</div>
+                <input
+                  value={form.slug}
+                  onChange={(e) => setForm((p) => ({ ...p, slug: normalizeSlug(e.target.value) }))}
+                  onBlur={() => setForm((p) => ({ ...p, slug: normalizeSlug(p.slug) }))}
+                  placeholder="online"
+                  className={fieldClass}
+                  required
+                />
+                <div className="text-xs text-gray-500">
+                  Адрес будет: /services/{normalizeSlug(form.slug) || "..."}; используйте латиницу.
+                </div>
+              </div>
+
+              <div className="grid grid-rows-[auto_44px_auto] gap-2">
+                <div className="text-sm font-semibold text-gray-900">Сортировка</div>
+                <input
+                  type="number"
+                  value={form.sortOrder}
+                  onChange={(e) => setForm((p) => ({ ...p, sortOrder: Number(e.target.value) }))}
+                  className={fieldClass}
+                />
+                <div className="text-xs text-gray-500">Чем меньше число, тем выше услуга в списке.</div>
               </div>
             </div>
 
-            <div className="grid gap-2">
-              <div className="text-sm font-semibold text-gray-900">Сортировка</div>
-              <input
-                type="number"
-                value={form.sortOrder}
-                onChange={(e) => setForm((p) => ({ ...p, sortOrder: Number(e.target.value) }))}
-                className={fieldClass}
-              />
+            <div className="mt-4 grid gap-4">
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-gray-900">Название</div>
+                <input
+                  value={form.title}
+                  onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                  className={fieldClass}
+                  required
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <div className="text-sm font-semibold text-gray-900">Короткое описание для карточки</div>
+                <textarea
+                  value={form.intro}
+                  onChange={(e) => setForm((p) => ({ ...p, intro: e.target.value }))}
+                  className={`${textareaClass} min-h-24`}
+                  required
+                />
+              </div>
+
+              <label className="inline-flex items-center gap-2 text-sm text-gray-900">
+                <input
+                  type="checkbox"
+                  checked={form.isPublished}
+                  onChange={(e) => setForm((p) => ({ ...p, isPublished: e.target.checked }))}
+                  className="h-4 w-4"
+                />
+                Опубликовать на сайте
+              </label>
             </div>
           </div>
 
-          <div className="grid gap-2">
-            <div className="text-sm font-semibold text-gray-900">Название</div>
-            <input
-              value={form.title}
-              onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-              className={fieldClass}
-              required
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <div className="text-sm font-semibold text-gray-900">Вступление</div>
-            <textarea
-              value={form.intro}
-              onChange={(e) => setForm((p) => ({ ...p, intro: e.target.value }))}
-              className={`${textareaClass} min-h-24`}
-              required
-            />
-          </div>
-
-          <label className="inline-flex items-center gap-2 text-sm text-gray-900">
-            <input
-              type="checkbox"
-              checked={form.isPublished}
-              onChange={(e) => setForm((p) => ({ ...p, isPublished: e.target.checked }))}
-              className="h-4 w-4"
-            />
-            Опубликовать
-          </label>
-
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-5">
-            <div className="text-sm font-semibold text-gray-900">Блоки</div>
+          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
+            <div className="text-base font-semibold text-gray-900">2. Внутренняя страница услуги</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Эти блоки появятся после перехода в карточку услуги.
+            </div>
             <div className="mt-3 grid gap-3">
               {blocks.map((b, idx) => (
                 <div key={idx} className="rounded-2xl border border-indigo-100 bg-white p-4">
