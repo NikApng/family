@@ -8,6 +8,7 @@ import { getSiteTexts } from "@/lib/siteTexts"
 import { Section } from "@/components/Section"
 import PersonCard from "@/components/PersonCard"
 import ReviewsSection from "@/components/Reviews/ReviewsSection"
+import { safeBadgeTone, type BadgeTone } from "@/lib/badgeTones"
 
 export const dynamic = "force-dynamic"
 
@@ -157,9 +158,8 @@ function BackdropSection({ id, children, variant = "a" }: BackdropProps) {
   )
 }
 
-function toTint(value: string): "indigo" | "rose" | "amber" {
-  if (value === "rose" || value === "amber" || value === "indigo") return value
-  return "indigo"
+function toTint(value: string): BadgeTone {
+  return safeBadgeTone(value)
 }
 
 export default async function HomePage() {

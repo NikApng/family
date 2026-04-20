@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache"
 import { notFound, redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import UploadPhotoClient from "../../gallery/UploadPhotoClient"
+import { BadgeToneSelect } from "@/components/admin/BadgeToneSelect"
+import { safeBadgeTone } from "@/lib/badgeTones"
 
 type Params = Promise<{ id: string | string[] }>
 
@@ -40,7 +42,7 @@ async function updateSpecialist(id: string, formData: FormData) {
   const name = String(formData.get("name") ?? "").trim()
   const role = String(formData.get("role") ?? "").trim()
   const badge = String(formData.get("badge") ?? "").trim()
-  const badgeTone = String(formData.get("badgeTone") ?? "indigo").trim()
+  const badgeTone = safeBadgeTone(String(formData.get("badgeTone") ?? "indigo").trim())
   const excerpt = String(formData.get("excerpt") ?? "").trim()
   const bio = String(formData.get("bio") ?? "").trim()
   const imageUrl = normalizeImageUrl(formData.get("imageUrl"))
@@ -170,17 +172,10 @@ export default async function AdminSpecialistEditPage({ params }: { params: Para
               />
             </div>
 
-            <div className="grid gap-2">
+            <div className="grid gap-2 md:col-span-2">
               <div className="text-sm font-semibold text-gray-900">Цвет бейджа</div>
-              <select
-                name="badgeTone"
-                defaultValue={specialist.badgeTone || "indigo"}
-                className="h-11 rounded-md border border-indigo-100 px-3 text-sm outline-none focus:border-indigo-300"
-              >
-                <option value="indigo">indigo</option>
-                <option value="rose">rose</option>
-                <option value="amber">amber</option>
-              </select>
+              <BadgeToneSelect defaultValue={specialist.badgeTone} />
+              <div className="text-xs text-gray-500">Такой цвет получит маленькая плашка рядом с именем специалиста.</div>
             </div>
 
             <div className="grid gap-2 md:col-span-2">
