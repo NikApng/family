@@ -128,6 +128,15 @@ body {
     border-color: rgb(var(--border) / 1);
 }
 
+.dark .personal-data-consent.is-invalid {
+    background-color: rgb(127 29 29 / 0.18);
+    border-color: rgb(251 113 133 / 0.72);
+}
+
+.dark .text-rose-600 {
+    color: rgb(251 113 133 / 1);
+}
+
 .dark .from-indigo-50,
 .dark .from-rose-50,
 .dark .from-amber-50 {

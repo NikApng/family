@@ -2,7 +2,7 @@ import Link from "next/link"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { bookingSchema } from "@/lib/validators"
-import { PersonalDataConsent } from "@/components/PersonalDataConsent"
+import { BookingForm } from "@/components/BookingForm"
 import { SiteLogo } from "@/components/SiteLogo"
 import { getSiteTexts } from "@/lib/siteTexts"
 import { Section } from "@/components/Section"
@@ -421,52 +421,7 @@ export default async function HomePage() {
       <BackdropSection id="book" variant="a">
         <Section title="Обратиться за поддержкой" subtitle="Оставьте заявку - мы свяжемся с вами и подберём удобный формат.">
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-            <form action={createBooking} className="rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm sm:p-7">
-              <div className="grid gap-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <input
-                    name="name"
-                    placeholder="Имя"
-                    className="h-11 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                    required
-                  />
-                  <input
-                    name="phone"
-                    type="tel"
-                    autoComplete="tel"
-                    inputMode="tel"
-                    pattern=".*\\d.*"
-                    title="Укажите номер телефона"
-                    placeholder="Телефон *"
-                    className="h-11 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                    aria-required="true"
-                    required
-                  />
-                </div>
-
-                <input
-                  name="email"
-                  placeholder="Email (необязательно)"
-                  className="h-11 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                />
-
-                <textarea
-                  name="message"
-                  placeholder="Коротко опишите ситуацию (необязательно)"
-                  className="min-h-32 rounded-md border border-gray-200 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                />
-
-                <PersonalDataConsent />
-
-                <button className="h-11 rounded-md bg-indigo-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow">
-                  Отправить заявку
-                </button>
-
-                <div className="text-xs leading-relaxed text-gray-600">
-                  Мы бережно относимся к вашим данным. Можно обращаться анонимно.
-                </div>
-              </div>
-            </form>
+            <BookingForm action={createBooking} />
 
             <div className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
               <div className="text-base font-semibold text-gray-900">Как всё проходит</div>

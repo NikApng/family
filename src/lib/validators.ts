@@ -5,7 +5,11 @@ const imageUrlMessage = "Укажи корректный URL: https://... или
 
 export const bookingSchema = z.object({
   name: z.string().trim().min(1),
-  phone: z.string().trim().min(1, "Номер телефона обязателен").regex(/\d/, "Укажите номер телефона"),
+  phone: z
+    .string()
+    .trim()
+    .min(1, "Номер телефона обязателен")
+    .refine((value) => value.replace(/\D/g, "").length >= 10, "Укажите телефон полностью"),
   email: z.string().trim().email().optional().or(z.literal("")),
   message: z.string().trim().optional().or(z.literal("")),
   personalDataConsent: z.preprocess((v) => {
