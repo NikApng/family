@@ -29,6 +29,12 @@ type FormState = {
   blocks: ServiceBlock[]
 }
 
+const fieldClass =
+  "h-11 w-full rounded-md border border-indigo-100 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
+
+const textareaClass =
+  "w-full rounded-md border border-indigo-100 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
+
 function safeText(v: unknown) {
   return String(v ?? "").trim()
 }
@@ -38,7 +44,7 @@ function normalizeSlug(value: string) {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9\-]/g, "")
+    .replace(/[^a-z\-]/g, "")
     .replace(/\-+/g, "-")
     .replace(/^\-|\-$/g, "")
 }
@@ -49,8 +55,9 @@ function toBlocks(value: unknown): ServiceBlock[] {
   const blocks: ServiceBlock[] = []
   for (const item of value) {
     if (!item || typeof item !== "object") continue
-    const title = safeText((item as any).title)
-    const text = safeText((item as any).text)
+    const block = item as Record<string, unknown>
+    const title = safeText(block.title)
+    const text = safeText(block.text)
     if (!title && !text) continue
     blocks.push({ title, text })
   }
@@ -202,16 +209,18 @@ export default function AdminServicesClient() {
         <form onSubmit={onSubmit} className="mt-6 grid gap-4 md:max-w-3xl">
           <div className="grid gap-3 md:grid-cols-2">
             <div className="grid gap-2">
-              <div className="text-sm font-semibold text-gray-900">Slug</div>
+              <div className="text-sm font-semibold text-gray-900">Ссылка</div>
               <input
                 value={form.slug}
-                onChange={(e) => setForm((p) => ({ ...p, slug: e.target.value }))}
+                onChange={(e) => setForm((p) => ({ ...p, slug: normalizeSlug(e.target.value) }))}
                 onBlur={() => setForm((p) => ({ ...p, slug: normalizeSlug(p.slug) }))}
                 placeholder="online"
-                className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
+                className={fieldClass}
                 required
               />
-              <div className="text-xs text-gray-500">URL будет: /services/{normalizeSlug(form.slug) || "..."}</div>
+              <div className="text-xs text-gray-500">
+                Адрес будет: /services/{normalizeSlug(form.slug) || "..."}; используйте латиницу.
+              </div>
             </div>
 
             <div className="grid gap-2">
@@ -220,7 +229,7 @@ export default function AdminServicesClient() {
                 type="number"
                 value={form.sortOrder}
                 onChange={(e) => setForm((p) => ({ ...p, sortOrder: Number(e.target.value) }))}
-                className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
+                className={fieldClass}
               />
             </div>
           </div>
@@ -230,7 +239,7 @@ export default function AdminServicesClient() {
             <input
               value={form.title}
               onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-              className="h-11 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
+              className={fieldClass}
               required
             />
           </div>
@@ -240,7 +249,7 @@ export default function AdminServicesClient() {
             <textarea
               value={form.intro}
               onChange={(e) => setForm((p) => ({ ...p, intro: e.target.value }))}
-              className="min-h-24 rounded-md border border-indigo-100 bg-white px-3 py-3 text-sm outline-none focus:border-indigo-300"
+              className={`${textareaClass} min-h-24`}
               required
             />
           </div>
@@ -270,7 +279,7 @@ export default function AdminServicesClient() {
                         }))
                       }
                       placeholder="Заголовок"
-                      className="h-10 rounded-md border border-indigo-100 bg-white px-3 text-sm outline-none focus:border-indigo-300"
+                      className={fieldClass}
                     />
                     <button
                       type="button"
@@ -295,7 +304,7 @@ export default function AdminServicesClient() {
                       }))
                     }
                     placeholder="Текст"
-                    className="mt-3 min-h-24 w-full rounded-md border border-indigo-100 bg-white px-3 py-3 text-sm outline-none focus:border-indigo-300"
+                    className={`${textareaClass} mt-3 min-h-24`}
                   />
                 </div>
               ))}
@@ -367,4 +376,3 @@ export default function AdminServicesClient() {
     </div>
   )
 }
-

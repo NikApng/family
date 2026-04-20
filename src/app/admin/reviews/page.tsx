@@ -39,9 +39,10 @@ function authorLabel(authorName: string | null, isAnonymous: boolean) {
 export default async function AdminReviewsPage({
   searchParams,
 }: {
-  searchParams?: { status?: string }
+  searchParams?: Promise<{ status?: string }> | { status?: string }
 }) {
-  const status = normalizeStatus(searchParams?.status)
+  const resolvedSearchParams = searchParams ? await searchParams : undefined
+  const status = normalizeStatus(resolvedSearchParams?.status)
 
   const items = await prisma.review.findMany({
     where: status === "ALL" ? undefined : { status },
@@ -62,7 +63,8 @@ export default async function AdminReviewsPage({
           <Link
             key={x}
             href={x === "PENDING" ? "/admin/reviews" : `/admin/reviews?status=${x}`}
-            className={`inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm font-semibold shadow-sm transition ${
+            aria-current={status === x ? "page" : undefined}
+            className={`inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm font-semibold shadow-sm outline-none transition focus-visible:ring-2 focus-visible:ring-indigo-300 ${
               status === x
                 ? "border-indigo-200 bg-indigo-50 text-gray-900"
                 : "border-indigo-100 bg-white text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"

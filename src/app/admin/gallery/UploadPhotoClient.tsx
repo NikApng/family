@@ -75,25 +75,27 @@ export default function UploadPhotoClient({ targetInputId }: Props) {
     <div className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/40 p-4">
       <div className="text-sm font-semibold text-gray-900">Загрузка файла</div>
 
-      <div className="mt-3 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+      <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
         <input
           ref={inputRef}
           type="file"
           accept="image/*"
           onChange={() => setError(null)}
-          className="w-full min-w-0 max-w-full text-sm sm:w-auto"
+          className="block w-full min-w-0 rounded-md border border-indigo-100 bg-white text-sm text-gray-900 shadow-sm file:mr-4 file:h-10 file:border-0 file:border-r file:border-indigo-100 file:bg-indigo-50 file:px-4 file:text-sm file:font-semibold file:text-gray-900 hover:file:bg-indigo-100"
         />
 
         <button
           type="button"
           onClick={upload}
           disabled={isLoading}
-          className="inline-flex h-10 items-center justify-center rounded-md border border-indigo-100 bg-white px-4 text-sm font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50 disabled:opacity-60"
+          className="inline-flex h-10 w-full items-center justify-center rounded-md border border-indigo-100 bg-white px-4 text-sm font-semibold text-gray-900 outline-none transition hover:border-indigo-200 hover:bg-indigo-50 focus-visible:ring-2 focus-visible:ring-indigo-300 disabled:opacity-60 sm:w-auto"
         >
           {isLoading ? "Загрузка..." : "Загрузить"}
         </button>
 
-        <div className="text-xs text-gray-600">Файл сохранится в хранилище сервера и будет доступен по /uploads/...</div>
+        <div className="text-xs leading-relaxed text-gray-600 lg:col-span-2">
+          Файл сохранится в хранилище сервера и будет доступен по /uploads/...
+        </div>
       </div>
 
       {error ? <div className="mt-2 text-xs font-semibold text-rose-700">{error}</div> : null}
