@@ -273,13 +273,13 @@ export default async function HomePage() {
                     <div className="absolute -right-12 bottom-8 h-36 w-36 rounded-full bg-rose-200/35 blur-2xl" />
                     <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 blur-3xl" />
                   </div>
-                  <div className="relative flex h-full items-center justify-center p-3 sm:p-4 md:p-5">
-                    <div className="flex h-full w-full items-center justify-center rounded-[1.5rem] bg-white/75 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.82)] sm:p-5 md:p-6">
+                  <div className="relative flex h-full min-h-[280px] items-center justify-center p-5 sm:p-6 md:p-8">
+                    <div className="flex aspect-square w-full max-w-[390px] items-center justify-center overflow-hidden rounded-[1.5rem] bg-[#f8fafc] p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.86),0_18px_34px_rgba(15,23,42,0.12)] sm:p-7 md:p-8">
                       <SiteLogo
                         priority
                         quality={100}
                         sizes="(min-width: 768px) 36vw, 84vw"
-                        className="h-full max-h-full w-full max-w-full drop-shadow-[0_18px_30px_rgba(79,70,229,0.12)]"
+                        className="h-auto w-full drop-shadow-[0_18px_30px_rgba(79,70,229,0.12)]"
                       />
                     </div>
                   </div>
@@ -421,7 +421,7 @@ export default async function HomePage() {
       <BackdropSection id="book" variant="a">
         <Section title="Обратиться за поддержкой" subtitle="Оставьте заявку - мы свяжемся с вами и подберём удобный формат.">
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-            <form action={createBooking} className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
+            <form action={createBooking} className="rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm sm:p-7">
               <div className="grid gap-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <input

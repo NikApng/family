@@ -78,6 +78,7 @@ body {
 
 .dark .border-indigo-100,
 .dark .border-indigo-200,
+.dark .border-gray-200,
 .dark .border-rose-100,
 .dark .border-rose-200,
 .dark .border-amber-100,
@@ -105,6 +106,26 @@ body {
 
 .dark .via-white {
     --tw-gradient-stops: var(--tw-gradient-from), rgb(var(--card) / 1), var(--tw-gradient-to);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: rgb(var(--muted) / 1);
+}
+
+.dark .personal-data-consent {
+    background-color: rgb(var(--accent) / 0.72);
+    border-color: rgb(var(--border) / 1);
+    color: rgb(var(--text) / 0.88);
+}
+
+.dark .personal-data-consent a {
+    color: rgb(165 180 252 / 1);
+}
+
+.dark .personal-data-consent input {
+    background-color: rgb(var(--card) / 1);
+    border-color: rgb(var(--border) / 1);
 }
 
 .dark .from-indigo-50,

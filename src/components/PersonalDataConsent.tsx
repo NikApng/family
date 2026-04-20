@@ -13,7 +13,7 @@ export function PersonalDataConsent({
   required = true,
 }: PersonalDataConsentProps) {
   const rootClassName = [
-    "flex items-start gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/80 px-4 py-3 text-sm leading-relaxed text-gray-700",
+    "personal-data-consent grid grid-cols-[auto_1fr] items-start gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/80 px-4 py-3 text-sm leading-relaxed text-gray-700",
     className,
   ]
     .filter(Boolean)
