@@ -125,7 +125,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-1.5 shadow-sm sm:h-15 sm:w-15">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5 shadow-sm sm:h-15 sm:w-15">
             <SiteLogo priority sizes="60px" className="h-full w-full" />
           </span>
           <span className="text-sm font-semibold tracking-tight text-text sm:text-base">
