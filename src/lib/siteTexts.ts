@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma"
 
 let siteTextLoadErrorLogged = false
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error)
+}
+
 export const siteTextDefaults = {
   "home.hero.badge": "Автономная некоммерческая организация \nПро Семью, Про Единство",
   "home.hero.title": "Вы не одни.\nМы рядом, чтобы поддержать вас.",
@@ -32,6 +36,10 @@ export const siteTextDefaults = {
 } as const
 
 export type SiteTextKey = keyof typeof siteTextDefaults
+
+type SiteTextModel = {
+  findMany(args: { where: { key: { in: readonly SiteTextKey[] } } }): Promise<Array<{ key: string; value: string }>>
+}
 
 export const siteTextFields = [
   { group: "Главная - первый экран", key: "home.hero.badge", label: "Бейдж над заголовком", type: "text" },
@@ -73,19 +81,19 @@ export async function getSiteTexts(keys?: readonly SiteTextKey[]) {
 
   if (!process.env.DATABASE_URL) return out
 
-  const siteTextModel = (prisma as any).siteText as { findMany?: unknown } | undefined
+  const siteTextModel = (prisma as unknown as { siteText?: SiteTextModel }).siteText
   if (typeof siteTextModel?.findMany !== "function") return out
 
   try {
-    const items = (await (siteTextModel.findMany as any)({
+    const items = await siteTextModel.findMany({
       where: { key: { in: requested } },
-    })) as Array<{ key: string; value: string }>
+    })
 
     for (const item of items) out[item.key] = item.value
   } catch (err) {
     if (!siteTextLoadErrorLogged) {
       siteTextLoadErrorLogged = true
-      console.error("Failed to load SiteText records", err)
+      console.warn(`Failed to load SiteText records, using defaults: ${getErrorMessage(err)}`)
     }
   }
 

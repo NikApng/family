@@ -123,10 +123,10 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="flex items-center gap-3">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 rounded-xl">
+        <Link href="/" className="flex items-center gap-3 rounded-xl">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5 shadow-sm sm:h-15 sm:w-15">
-            <SiteLogo priority sizes="60px" className="h-full w-full" />
+            <SiteLogo priority sizes="60px" className="h-full w-full rounded-xl" />
           </span>
           <span className="text-sm font-semibold tracking-tight text-text sm:text-base">
             Про Семью, Про Единство

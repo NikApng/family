@@ -162,6 +162,25 @@ function toTint(value: string): BadgeTone {
   return safeBadgeTone(value)
 }
 
+let homeDataLoadErrorLogged = false
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error)
+}
+
+async function safeHomeRead<T>(label: string, load: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await load()
+  } catch (error) {
+    if (!homeDataLoadErrorLogged) {
+      homeDataLoadErrorLogged = true
+      console.warn(`Failed to load home data (${label}), rendering fallback: ${getErrorMessage(error)}`)
+    }
+
+    return fallback
+  }
+}
+
 export default async function HomePage() {
   const now = new Date()
   const pastCutoff = new Date(now)
@@ -183,26 +202,46 @@ export default async function HomePage() {
       "home.what.card3.title",
       "home.what.card3.description",
     ]),
-    prisma.event.findMany({
-      orderBy: { date: "asc" },
-      take: 3,
-      where: { date: { gte: now } },
-    }),
-    prisma.event.findMany({
-      orderBy: { date: "desc" },
-      take: 3,
-      where: { date: { lt: now, gte: pastCutoff } },
-    }),
-    prisma.specialist.findMany({
-      where: { isPublished: true },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-    }),
-    prisma.service.findMany({
-      where: { isPublished: true },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      take: 4,
-      select: { slug: true, title: true },
-    }),
+    safeHomeRead(
+      "upcoming events",
+      () =>
+        prisma.event.findMany({
+          orderBy: { date: "asc" },
+          take: 3,
+          where: { date: { gte: now } },
+        }),
+      [],
+    ),
+    safeHomeRead(
+      "recent events",
+      () =>
+        prisma.event.findMany({
+          orderBy: { date: "desc" },
+          take: 3,
+          where: { date: { lt: now, gte: pastCutoff } },
+        }),
+      [],
+    ),
+    safeHomeRead(
+      "specialists",
+      () =>
+        prisma.specialist.findMany({
+          where: { isPublished: true },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+        }),
+      [],
+    ),
+    safeHomeRead(
+      "services",
+      () =>
+        prisma.service.findMany({
+          where: { isPublished: true },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+          take: 4,
+          select: { slug: true, title: true },
+        }),
+      [],
+    ),
   ])
   const eventsForHome = upcoming.length ? upcoming : recentPast
 
