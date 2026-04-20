@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader"
 import { SiteFooter } from "@/components/SiteFooter"
 
 export const metadata: Metadata = {
-    title: "Про Семью,2222 Про Единство",
+    title: "Про Семью, Про Единство",
     description: "Психологическая поддержка гражданам и их семьям.",
     icons: {
         icon: "/images/image.png",
