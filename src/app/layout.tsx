@@ -1,5 +1,6 @@
 import "./globals.css"
 import type { Metadata } from "next"
+import { headers } from "next/headers"
 import Script from "next/script"
 import { SiteHeader } from "@/components/SiteHeader"
 import { SiteFooter } from "@/components/SiteFooter"
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
     },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+    const pathname = (await headers()).get("x-admin-pathname") ?? ""
+    const isAdminRoute = pathname.startsWith("/admin")
+
     return (
         <html lang="ru" suppressHydrationWarning>
         <head>
@@ -32,9 +36,9 @@ try {
         </head>
         <body className="bg-bg text-text">
         <div className="min-h-dvh flex flex-col">
-            <SiteHeader />
+            {isAdminRoute ? null : <SiteHeader />}
             <main className="flex-1">{children}</main>
-            <SiteFooter />
+            {isAdminRoute ? null : <SiteFooter />}
         </div>
         </body>
         </html>

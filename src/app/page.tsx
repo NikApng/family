@@ -36,6 +36,7 @@ async function createBooking(formData: FormData) {
     },
   })
   revalidatePath("/")
+  revalidatePath("/admin/bookings")
 }
 
 type UiLinkProps = {
@@ -166,7 +167,7 @@ export default async function HomePage() {
   const pastCutoff = new Date(now)
   pastCutoff.setDate(pastCutoff.getDate() - 30)
 
-  const [t, upcoming, recentPast, specialists] = await Promise.all([
+  const [t, upcoming, recentPast, specialists, servicesForHome] = await Promise.all([
     getSiteTexts([
       "home.hero.badge",
       "home.hero.title",
@@ -195,6 +196,12 @@ export default async function HomePage() {
     prisma.specialist.findMany({
       where: { isPublished: true },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.service.findMany({
+      where: { isPublished: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+      take: 4,
+      select: { slug: true, title: true },
     }),
   ])
   const eventsForHome = upcoming.length ? upcoming : recentPast
@@ -266,13 +273,15 @@ export default async function HomePage() {
                     <div className="absolute -right-12 bottom-8 h-36 w-36 rounded-full bg-rose-200/35 blur-2xl" />
                     <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/80 blur-3xl" />
                   </div>
-                  <div className="relative h-full overflow-hidden">
-                    <SiteLogo
-                      priority
-                      quality={100}
-                      sizes="(min-width: 768px) 36vw, 84vw"
-                      className="h-full w-full scale-[1.06] object-cover object-center drop-shadow-[0_24px_38px_rgba(79,70,229,0.14)]"
-                    />
+                  <div className="relative flex h-full items-center justify-center p-3 sm:p-4 md:p-5">
+                    <div className="flex h-full w-full items-center justify-center rounded-[1.5rem] bg-white/75 p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.82)] sm:p-5 md:p-6">
+                      <SiteLogo
+                        priority
+                        quality={100}
+                        sizes="(min-width: 768px) 36vw, 84vw"
+                        className="h-full max-h-full w-full max-w-full drop-shadow-[0_18px_30px_rgba(79,70,229,0.12)]"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -323,11 +332,21 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
+            {servicesForHome.length ? (
+              servicesForHome.map((service) => (
+                <GhostLink key={service.slug} href={`/services/${service.slug}`}>
+                  {service.title}
+                </GhostLink>
+              ))
+            ) : null}
+          </div>
+
+          {false ? <div className="mt-8 flex flex-wrap gap-3">
             <GhostLink href="/services/online">Онлайн-консультация</GhostLink>
             <GhostLink href="/services/individual">Индивидуальная терапия</GhostLink>
             <GhostLink href="/services/group">Группа взаимопомощи</GhostLink>
             <GhostLink href="/services/relatives">Поддержка близких</GhostLink>
-          </div>
+          </div> : null}
         </Section>
       </BackdropSection>
 
@@ -413,8 +432,14 @@ export default async function HomePage() {
                   />
                   <input
                     name="phone"
-                    placeholder="Телефон"
+                    type="tel"
+                    autoComplete="tel"
+                    inputMode="tel"
+                    pattern=".*\\d.*"
+                    title="Укажите номер телефона"
+                    placeholder="Телефон *"
                     className="h-11 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                    aria-required="true"
                     required
                   />
                 </div>

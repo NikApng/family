@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic"
 const LOGIN_PATH = "/admin/login"
 
 const NAV_ITEMS = [
+  { href: "/admin/bookings", label: "Заявки" },
   { href: "/admin/specialists", label: "Специалисты" },
   { href: "/admin/services", label: "Услуги" },
   { href: "/admin/events", label: "Афиша" },
@@ -28,7 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
-      <header className="sticky top-16 z-20 border-b border-indigo-100 bg-white/80 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-indigo-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <div className="flex items-center gap-3">
             <Link href="/" className="text-sm font-semibold text-gray-900">

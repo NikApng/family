@@ -4,10 +4,10 @@ import { isValidImageUrl } from "@/lib/imageUrl"
 const imageUrlMessage = "Укажи корректный URL: https://... или /uploads/... или /images/..."
 
 export const bookingSchema = z.object({
-  name: z.string().min(1),
-  phone: z.string().min(1),
-  email: z.string().email().optional().or(z.literal("")),
-  message: z.string().optional().or(z.literal("")),
+  name: z.string().trim().min(1),
+  phone: z.string().trim().min(1, "Номер телефона обязателен").regex(/\d/, "Укажите номер телефона"),
+  email: z.string().trim().email().optional().or(z.literal("")),
+  message: z.string().trim().optional().or(z.literal("")),
   personalDataConsent: z.preprocess((v) => {
     if (typeof v === "boolean") return v
 

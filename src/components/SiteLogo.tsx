@@ -19,10 +19,12 @@ export function SiteLogo({
     <Image
       src="/images/image.png"
       alt={alt}
+      width={1080}
+      height={1099}
       priority={priority}
       quality={quality}
       sizes={sizes}
-      className={["h-full w-full ", className].filter(Boolean).join(" ")}
+      className={["object-contain", className].filter(Boolean).join(" ")}
     />
   )
 }
