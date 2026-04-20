@@ -60,6 +60,7 @@ export default function AdminGalleryClient() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isListOpen, setIsListOpen] = useState(false)
 
   const canSubmit = useMemo(() => {
     return safeText(form.title).length > 0 && isValidImageUrl(form.imageUrl)
@@ -177,52 +178,70 @@ export default function AdminGalleryClient() {
         </form>
       </div>
 
-      <div className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
-        <div className="text-lg font-semibold text-gray-900">Список</div>
-        <div className="mt-1 text-sm text-gray-600">Редактирование и удаление фотоотчётов.</div>
-
-        {isLoading ? <div className="mt-4 text-sm text-gray-600">Загрузка...</div> : null}
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {items.map((p) => (
-            <div key={p.id} className="overflow-hidden rounded-2xl border border-indigo-100 bg-white">
-              <div className="relative aspect-[4/3]">
-                <Image src={safeImageSrc(p.imageUrl)} alt={p.title} fill className="object-cover" />
-              </div>
-
-              <div className="p-4">
-                <div className="text-sm font-semibold text-gray-900 line-clamp-2">{p.title}</div>
-
-                {!isValidImageUrl(p.imageUrl) ? (
-                  <div className="mt-1 text-xs font-semibold text-rose-700">Некорректный URL картинки</div>
-                ) : (
-                  <div className="mt-1 text-xs text-gray-500">
-                    {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium" }).format(new Date(p.createdAt))}
-                  </div>
-                )}
-
-                <div className="mt-3 flex items-center gap-2">
-                  <Link
-                    href={`/admin/gallery/${p.id}`}
-                    className="inline-flex h-9 items-center justify-center rounded-md border border-indigo-100 bg-white px-3 text-xs font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"
-                  >
-                    Редактировать
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={() => void onDelete(p.id)}
-                    className="inline-flex h-9 items-center justify-center rounded-md border border-rose-100 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:border-rose-200"
-                  >
-                    Удалить
-                  </button>
-                </div>
-              </div>
+      <div className="rounded-3xl border border-indigo-100 bg-white p-5 shadow-sm sm:p-7">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-lg font-semibold text-gray-900">Готовые фотоотчёты</div>
+            <div className="mt-1 text-sm text-gray-600">
+              {isLoading ? "Загружаем список..." : `Создано: ${items.length}`}
             </div>
-          ))}
+          </div>
 
-          {!isLoading && !items.length ? <div className="text-sm text-gray-600">Пока пусто.</div> : null}
+          <button
+            type="button"
+            onClick={() => setIsListOpen((value) => !value)}
+            className="inline-flex h-10 items-center justify-center rounded-md border border-indigo-100 bg-white px-4 text-sm font-semibold text-gray-900 outline-none transition hover:border-indigo-200 hover:bg-indigo-50 focus-visible:ring-2 focus-visible:ring-indigo-300"
+          >
+            {isListOpen ? "Скрыть список" : "Показать готовые"}
+          </button>
         </div>
+
+        {isListOpen ? (
+          <>
+            {isLoading ? <div className="mt-4 text-sm text-gray-600">Загрузка...</div> : null}
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+              {items.map((p) => (
+                <div key={p.id} className="overflow-hidden rounded-2xl border border-indigo-100 bg-white">
+                  <div className="relative aspect-[4/3]">
+                    <Image src={safeImageSrc(p.imageUrl)} alt={p.title} fill className="object-cover" />
+                  </div>
+
+                  <div className="p-4">
+                    <div className="text-sm font-semibold text-gray-900 line-clamp-2">{p.title}</div>
+
+                    {!isValidImageUrl(p.imageUrl) ? (
+                      <div className="mt-1 text-xs font-semibold text-rose-700">Некорректный URL картинки</div>
+                    ) : (
+                      <div className="mt-1 text-xs text-gray-500">
+                        {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium" }).format(new Date(p.createdAt))}
+                      </div>
+                    )}
+
+                    <div className="mt-3 flex items-center gap-2">
+                      <Link
+                        href={`/admin/gallery/${p.id}`}
+                        className="inline-flex h-9 items-center justify-center rounded-md border border-indigo-100 bg-white px-3 text-xs font-semibold text-gray-900 hover:border-indigo-200 hover:bg-indigo-50"
+                      >
+                        Редактировать
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => void onDelete(p.id)}
+                        className="inline-flex h-9 items-center justify-center rounded-md border border-rose-100 bg-rose-50 px-3 text-xs font-semibold text-rose-700 hover:border-rose-200"
+                      >
+                        Удалить
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {!isLoading && !items.length ? <div className="text-sm text-gray-600">Пока пусто.</div> : null}
+            </div>
+          </>
+        ) : null}
       </div>
     </div>
   )
