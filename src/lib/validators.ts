@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { isValidImageUrl } from "@/lib/imageUrl"
+import { getCisPhoneValidationError } from "@/lib/phoneMasks"
 
 const imageUrlMessage = "Укажи корректный URL: https://... или /uploads/... или /images/..."
 
@@ -8,8 +9,15 @@ export const bookingSchema = z.object({
   phone: z
     .string()
     .trim()
-    .min(1, "Номер телефона обязателен")
-    .refine((value) => value.replace(/\D/g, "").length >= 10, "Укажите телефон полностью"),
+    .superRefine((value, ctx) => {
+      const error = getCisPhoneValidationError(value)
+      if (!error) return
+
+      ctx.addIssue({
+        code: "custom",
+        message: error,
+      })
+    }),
   email: z.string().trim().email().optional().or(z.literal("")),
   message: z.string().trim().optional().or(z.literal("")),
   personalDataConsent: z.preprocess((v) => {
