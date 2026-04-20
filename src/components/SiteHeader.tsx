@@ -179,7 +179,7 @@ export function SiteHeader() {
                   : { open: true, pathname },
               )
             }
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card text-text shadow-sm transition hover:bg-accent md:hidden"
+            className="inline-flex p-0  h-10 w-10 items-center justify-center rounded-md border border-border bg-card text-text shadow-sm transition hover:bg-accent md:hidden"
           >
             {open ? "✕" : "☰"}
           </button>
