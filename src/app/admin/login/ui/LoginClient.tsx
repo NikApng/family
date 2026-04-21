@@ -75,8 +75,9 @@ export default function LoginClient() {
     setIsLoading(false)
 
     if (!res?.ok) {
-      setError("Неверный логин или пароль")
-      console.log("signIn result", res)
+      const raw = safeText(res?.error)
+      const isGeneric = !raw || raw === "CredentialsSignin"
+      setError(isGeneric ? "Неверный логин или пароль" : raw)
       return
     }
 
