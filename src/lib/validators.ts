@@ -5,10 +5,11 @@ import { getCisPhoneValidationError } from "@/lib/phoneMasks"
 const imageUrlMessage = "Укажи корректный URL: https://... или /uploads/... или /images/..."
 
 export const bookingSchema = z.object({
-  name: z.string().trim().min(1),
+  name: z.string().trim().min(1).max(80),
   phone: z
     .string()
     .trim()
+    .max(24)
     .superRefine((value, ctx) => {
       const error = getCisPhoneValidationError(value)
       if (!error) return
@@ -18,8 +19,8 @@ export const bookingSchema = z.object({
         message: error,
       })
     }),
-  email: z.string().trim().email().optional().or(z.literal("")),
-  message: z.string().trim().optional().or(z.literal("")),
+  email: z.string().trim().email().max(120).optional().or(z.literal("")),
+  message: z.string().trim().max(1000).optional().or(z.literal("")),
   personalDataConsent: z.preprocess((v) => {
     if (typeof v === "boolean") return v
 

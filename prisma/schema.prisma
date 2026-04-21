@@ -14,13 +14,27 @@ enum ReviewStatus {
   REJECTED
 }
 
+enum BookingStatus {
+  NEW
+  IN_PROGRESS
+  DONE
+  SPAM
+}
+
 model BookingRequest {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   name      String
   phone     String
   email     String?
   message   String?
-  createdAt DateTime @default(now())
+  status    BookingStatus @default(NEW)
+  ipHash    String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([ipHash, createdAt])
 }
 
 model Event {

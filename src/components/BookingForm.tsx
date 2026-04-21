@@ -1,14 +1,23 @@
 "use client"
 
-import { useState, type FormEvent } from "react"
+import { useActionState, useEffect, useRef, useState, type FormEvent } from "react"
 import { PersonalDataConsent } from "@/components/PersonalDataConsent"
 import { formatCisPhone, getCisPhoneValidationError } from "@/lib/phoneMasks"
 
-type BookingFormProps = {
-  action: (formData: FormData) => void | Promise<void>
-}
+type BookingFormField = "name" | "phone" | "email" | "message" | "personalDataConsent"
 
-type BookingFormErrors = Partial<Record<"name" | "phone" | "email" | "personalDataConsent", string>>
+type BookingFormErrors = Partial<Record<BookingFormField, string>>
+
+export type BookingFormState = {
+  ok: boolean
+  message: string
+  fieldErrors?: BookingFormErrors
+} | null
+
+type BookingFormProps = {
+  action: (state: BookingFormState, formData: FormData) => Promise<BookingFormState>
+  formToken: string
+}
 
 const baseFieldClass =
   "h-11 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
@@ -29,8 +38,16 @@ function FieldError({ id, children }: { id: string; children?: string }) {
   )
 }
 
-export function BookingForm({ action }: BookingFormProps) {
+export function BookingForm({ action, formToken }: BookingFormProps) {
+  const formRef = useRef<HTMLFormElement | null>(null)
+  const [state, formAction, isPending] = useActionState(action, null)
   const [errors, setErrors] = useState<BookingFormErrors>({})
+
+  useEffect(() => {
+    if (!state?.ok) return
+
+    formRef.current?.reset()
+  }, [state])
 
   function clearError(name: keyof BookingFormErrors) {
     setErrors((current) => {
@@ -68,8 +85,22 @@ export function BookingForm({ action }: BookingFormProps) {
     }
   }
 
+  const visibleErrors = { ...(state?.fieldErrors ?? {}), ...errors }
+
   return (
-    <form action={action} noValidate onSubmit={onSubmit} className="rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm sm:p-7">
+    <form
+      ref={formRef}
+      action={formAction}
+      noValidate
+      onSubmit={onSubmit}
+      className="rounded-3xl border border-indigo-100 bg-white p-6 shadow-sm sm:p-7"
+    >
+      <input type="hidden" name="formToken" value={formToken} />
+      <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+        <label htmlFor="booking-company">Company</label>
+        <input id="booking-company" name="company" tabIndex={-1} autoComplete="off" />
+      </div>
+
       <div className="grid gap-4">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="grid gap-1.5">
@@ -83,12 +114,12 @@ export function BookingForm({ action }: BookingFormProps) {
               required
               maxLength={80}
               placeholder="Как к вам обращаться"
-              className={getFieldClass(errors.name)}
-              aria-invalid={Boolean(errors.name)}
-              aria-describedby={errors.name ? "booking-name-error" : undefined}
+              className={getFieldClass(visibleErrors.name)}
+              aria-invalid={Boolean(visibleErrors.name)}
+              aria-describedby={visibleErrors.name ? "booking-name-error" : undefined}
               onChange={() => clearError("name")}
             />
-            <FieldError id="booking-name-error">{errors.name}</FieldError>
+            <FieldError id="booking-name-error">{visibleErrors.name}</FieldError>
           </div>
 
           <div className="grid gap-1.5">
@@ -104,10 +135,10 @@ export function BookingForm({ action }: BookingFormProps) {
               required
               maxLength={24}
               placeholder="+7, +375 или другой СНГ"
-              className={getFieldClass(errors.phone)}
+              className={getFieldClass(visibleErrors.phone)}
               aria-required="true"
-              aria-invalid={Boolean(errors.phone)}
-              aria-describedby={errors.phone ? "booking-phone-error" : undefined}
+              aria-invalid={Boolean(visibleErrors.phone)}
+              aria-describedby={visibleErrors.phone ? "booking-phone-error" : undefined}
               onChange={(event) => {
                 event.currentTarget.value = formatCisPhone(event.currentTarget.value)
                 clearError("phone")
@@ -116,7 +147,7 @@ export function BookingForm({ action }: BookingFormProps) {
                 event.currentTarget.value = formatCisPhone(event.currentTarget.value)
               }}
             />
-            <FieldError id="booking-phone-error">{errors.phone}</FieldError>
+            <FieldError id="booking-phone-error">{visibleErrors.phone}</FieldError>
           </div>
         </div>
 
@@ -131,12 +162,12 @@ export function BookingForm({ action }: BookingFormProps) {
             autoComplete="email"
             maxLength={120}
             placeholder="Необязательно"
-            className={getFieldClass(errors.email)}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? "booking-email-error" : undefined}
+            className={getFieldClass(visibleErrors.email)}
+            aria-invalid={Boolean(visibleErrors.email)}
+            aria-describedby={visibleErrors.email ? "booking-email-error" : undefined}
             onChange={() => clearError("email")}
           />
-          <FieldError id="booking-email-error">{errors.email}</FieldError>
+          <FieldError id="booking-email-error">{visibleErrors.email}</FieldError>
         </div>
 
         <div className="grid gap-1.5">
@@ -154,13 +185,29 @@ export function BookingForm({ action }: BookingFormProps) {
 
         <div className="grid gap-1.5">
           <PersonalDataConsent
-            className={errors.personalDataConsent ? "is-invalid border-rose-300 bg-rose-50/80" : ""}
+            className={visibleErrors.personalDataConsent ? "is-invalid border-rose-300 bg-rose-50/80" : ""}
           />
-          <FieldError id="booking-consent-error">{errors.personalDataConsent}</FieldError>
+          <FieldError id="booking-consent-error">{visibleErrors.personalDataConsent}</FieldError>
         </div>
 
-        <button className="h-11 rounded-md bg-indigo-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow">
-          Отправить заявку
+        {state?.message ? (
+          <div
+            className={`rounded-md border px-3 py-2 text-sm ${
+              state.ok ? "border-emerald-100 bg-emerald-50 text-emerald-700" : "border-rose-100 bg-rose-50 text-rose-700"
+            }`}
+            role="status"
+            aria-live="polite"
+          >
+            {state.message}
+          </div>
+        ) : null}
+
+        <button
+          type="submit"
+          disabled={isPending}
+          className="h-11 rounded-md bg-indigo-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow disabled:cursor-not-allowed disabled:bg-indigo-300"
+        >
+          {isPending ? "Отправка..." : "Отправить заявку"}
         </button>
 
         <div className="text-xs leading-relaxed text-gray-600">

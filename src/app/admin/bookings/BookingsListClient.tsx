@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { deleteBookingAction } from "./actions"
+import { deleteBookingAction, updateBookingStatusAction } from "./actions"
+
+export type BookingStatus = "NEW" | "IN_PROGRESS" | "DONE" | "SPAM"
 
 export type BookingListItem = {
   id: string
@@ -9,7 +11,22 @@ export type BookingListItem = {
   phone: string | null
   email: string | null
   message: string | null
+  status: BookingStatus
   createdAtLabel: string
+}
+
+const STATUS_LABEL: Record<BookingStatus, string> = {
+  NEW: "Новая",
+  IN_PROGRESS: "В работе",
+  DONE: "Закрыта",
+  SPAM: "Спам",
+}
+
+const STATUS_BADGE: Record<BookingStatus, string> = {
+  NEW: "border-amber-100 bg-amber-50 text-amber-700",
+  IN_PROGRESS: "border-indigo-100 bg-indigo-50 text-indigo-700",
+  DONE: "border-emerald-100 bg-emerald-50 text-emerald-700",
+  SPAM: "border-rose-100 bg-rose-50 text-rose-700",
 }
 
 function textOrFallback(value: string | null | undefined, fallback: string) {
@@ -28,6 +45,40 @@ function renderContact(value: string | null, hrefPrefix: "tel:" | "mailto:") {
     >
       {value}
     </a>
+  )
+}
+
+function StatusBadge({ status }: { status: BookingStatus }) {
+  return (
+    <span className={`inline-flex items-center rounded-md border px-2 py-1 text-[11px] font-semibold ${STATUS_BADGE[status]}`}>
+      {STATUS_LABEL[status]}
+    </span>
+  )
+}
+
+function StatusUpdateForm({ id, status, fullWidth = false }: { id: string; status: BookingStatus; fullWidth?: boolean }) {
+  return (
+    <form
+      action={updateBookingStatusAction}
+      onClick={(event) => event.stopPropagation()}
+      className={["flex items-center gap-2", fullWidth ? "w-full sm:w-auto" : ""].join(" ")}
+    >
+      <input type="hidden" name="id" value={id} />
+      <select
+        name="status"
+        defaultValue={status}
+        className="h-9 min-w-32 rounded-md border border-indigo-100 bg-white px-2 text-xs font-semibold text-gray-900 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+      >
+        {(["NEW", "IN_PROGRESS", "DONE", "SPAM"] as const).map((value) => (
+          <option key={value} value={value}>
+            {STATUS_LABEL[value]}
+          </option>
+        ))}
+      </select>
+      <button className="inline-flex h-9 items-center justify-center rounded-md border border-indigo-100 bg-indigo-50 px-3 text-xs font-semibold text-indigo-700 transition hover:border-indigo-200 hover:bg-indigo-100">
+        Сохранить
+      </button>
+    </form>
   )
 }
 
@@ -83,7 +134,10 @@ function BookingDetailsModal({
             <h2 id="booking-details-title" className="mt-1 break-words text-xl font-semibold text-gray-900">
               {textOrFallback(item.name, "Без имени")}
             </h2>
-            <div className="mt-1 text-sm text-gray-600">{item.createdAtLabel}</div>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-600">
+              <span>{item.createdAtLabel}</span>
+              <StatusBadge status={item.status} />
+            </div>
           </div>
 
           <button
@@ -115,6 +169,7 @@ function BookingDetailsModal({
           </div>
 
           <div className="mt-5 flex flex-wrap justify-end gap-3">
+            <StatusUpdateForm id={item.id} status={item.status} />
             <DeleteBookingForm id={item.id} />
             <button
               type="button"
@@ -150,8 +205,9 @@ export function BookingsListClient({ items }: { items: BookingListItem[] }) {
         <div className="hidden grid-cols-12 gap-3 border-b border-indigo-100 px-4 py-3 text-xs font-semibold text-gray-600 md:grid">
           <div className="col-span-2">Имя</div>
           <div className="col-span-2">Контакты</div>
-          <div className="col-span-4">Сообщение</div>
+          <div className="col-span-3">Сообщение</div>
           <div className="col-span-2">Дата</div>
+          <div className="col-span-1">Статус</div>
           <div className="col-span-2 text-right">Действия</div>
         </div>
 
@@ -172,6 +228,7 @@ export function BookingsListClient({ items }: { items: BookingListItem[] }) {
                     <div className="truncate text-sm font-semibold text-gray-900">{textOrFallback(item.name, "Без имени")}</div>
                     <div className="mt-1 text-xs text-gray-600">{item.createdAtLabel}</div>
                   </div>
+                  <StatusBadge status={item.status} />
                 </div>
 
                 <div className="mt-3 grid gap-2 text-sm">
@@ -192,7 +249,8 @@ export function BookingsListClient({ items }: { items: BookingListItem[] }) {
                   </div>
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <StatusUpdateForm id={item.id} status={item.status} fullWidth />
                   <DeleteBookingForm id={item.id} fullWidth />
                 </div>
               </div>
@@ -213,14 +271,19 @@ export function BookingsListClient({ items }: { items: BookingListItem[] }) {
                   <div>{renderContact(item.email, "mailto:")}</div>
                 </div>
 
-                <div className="col-span-4">
+                <div className="col-span-3">
                   <div className="line-clamp-4 whitespace-pre-line break-words text-gray-800">{message}</div>
                   <div className="mt-2 text-xs font-semibold text-indigo-700">Открыть полностью</div>
                 </div>
 
                 <div className="col-span-2 text-xs text-gray-600">{item.createdAtLabel}</div>
 
-                <div className="col-span-2 flex justify-end">
+                <div className="col-span-1">
+                  <StatusBadge status={item.status} />
+                </div>
+
+                <div className="col-span-2 flex flex-wrap justify-end gap-2">
+                  <StatusUpdateForm id={item.id} status={item.status} />
                   <DeleteBookingForm id={item.id} />
                 </div>
               </div>
@@ -229,7 +292,7 @@ export function BookingsListClient({ items }: { items: BookingListItem[] }) {
         })}
 
         {!items.length ? (
-          <div className="px-4 py-10 text-center text-sm text-gray-600">Пока нет ни одной заявки</div>
+          <div className="px-4 py-10 text-center text-sm text-gray-600">По выбранным фильтрам заявок нет</div>
         ) : null}
       </div>
 

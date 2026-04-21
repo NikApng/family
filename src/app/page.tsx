@@ -1,18 +1,28 @@
 import Link from "next/link"
 import { revalidatePath } from "next/cache"
+import { headers } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { bookingSchema } from "@/lib/validators"
-import { BookingForm } from "@/components/BookingForm"
+import { BookingForm, type BookingFormState } from "@/components/BookingForm"
 import { SiteLogo } from "@/components/SiteLogo"
 import { getSiteTexts } from "@/lib/siteTexts"
 import { Section } from "@/components/Section"
 import PersonCard from "@/components/PersonCard"
 import ReviewsSection from "@/components/Reviews/ReviewsSection"
 import { safeBadgeTone, type BadgeTone } from "@/lib/badgeTones"
+import {
+  createBookingFormToken,
+  getClientIp,
+  getDuplicateWindowStart,
+  getMaxBookingRequestsPerWindow,
+  getObviousBookingSpamReason,
+  getRateLimitWindowStart,
+} from "@/lib/bookingAntiSpam"
+import { hashIp } from "@/lib/security/ipHash"
 
 export const dynamic = "force-dynamic"
 
-async function createBooking(formData: FormData) {
+async function createBooking(_: BookingFormState, formData: FormData): Promise<BookingFormState> {
   "use server"
 
   const raw = {
@@ -22,22 +32,79 @@ async function createBooking(formData: FormData) {
     message: String(formData.get("message") ?? ""),
     personalDataConsent: String(formData.get("personalDataConsent") ?? ""),
   }
+  const honeypot = String(formData.get("company") ?? "")
+  const formToken = String(formData.get("formToken") ?? "")
+
+  const spamReason = getObviousBookingSpamReason({
+    name: raw.name,
+    email: raw.email,
+    message: raw.message,
+    honeypot,
+    formToken,
+  })
+
+  if (spamReason === "honeypot" || spamReason === "obvious_spam") {
+    return { ok: true, message: "Спасибо. Заявка отправлена." }
+  }
+
+  if (spamReason === "too_fast") {
+    return { ok: false, message: "Форма отправлена слишком быстро. Подождите пару секунд и попробуйте снова." }
+  }
+
+  if (spamReason === "expired_token" || spamReason === "invalid_token") {
+    return { ok: false, message: "Форма устарела. Обновите страницу и отправьте заявку ещё раз." }
+  }
 
   const parsed = bookingSchema.safeParse(raw)
-  if (!parsed.success) return
+  if (!parsed.success) {
+    return { ok: false, message: "Проверьте поля формы и отправьте заявку ещё раз." }
+  }
 
   const { name, phone, email, message } = parsed.data
+  const requestHeaders = await headers()
+  const ipHash = hashIp(getClientIp(requestHeaders))
+
+  if (ipHash) {
+    const recentCount = await prisma.bookingRequest.count({
+      where: {
+        ipHash,
+        createdAt: { gt: getRateLimitWindowStart() },
+      },
+    })
+
+    if (recentCount >= getMaxBookingRequestsPerWindow()) {
+      return { ok: false, message: "Слишком много заявок за короткое время. Попробуйте позже." }
+    }
+  }
+
+  const duplicateConditions: Array<{ phone: string } | { email: string }> = [{ phone }]
+  if (email) duplicateConditions.push({ email })
+
+  const duplicate = await prisma.bookingRequest.findFirst({
+    where: {
+      createdAt: { gt: getDuplicateWindowStart() },
+      OR: duplicateConditions,
+    },
+    select: { id: true },
+  })
+
+  if (duplicate) {
+    return { ok: true, message: "Заявка уже получена. Мы свяжемся с вами по указанным контактам." }
+  }
 
   await prisma.bookingRequest.create({
     data: {
       name,
       phone,
-      email,
-      message,
+      email: email || null,
+      message: message || null,
+      ipHash,
     },
   })
   revalidatePath("/")
   revalidatePath("/admin/bookings")
+
+  return { ok: true, message: "Спасибо. Заявка отправлена." }
 }
 
 type UiLinkProps = {
@@ -462,7 +529,7 @@ export default async function HomePage() {
       <BackdropSection id="book" variant="a">
         <Section title="Обратиться за поддержкой" subtitle="Оставьте заявку - мы свяжемся с вами и подберём удобный формат.">
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-            <BookingForm action={createBooking} />
+            <BookingForm action={createBooking} formToken={createBookingFormToken()} />
 
             <div className="rounded-3xl border border-indigo-100 bg-white p-7 shadow-sm">
               <div className="text-base font-semibold text-gray-900">Как всё проходит</div>
