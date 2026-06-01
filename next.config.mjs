@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'www.canva.com' },
+      { protocol: 'https', hostname: '**' },
     ],
   },
 }
