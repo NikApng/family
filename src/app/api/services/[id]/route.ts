@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 import { revalidatePath } from "next/cache"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { serviceSchema } from "@/lib/validators"
+import { requireAdmin } from "@/lib/requireAdmin"
 
 type Ctx = { params: Promise<{ id: string }> }
 
@@ -17,16 +17,8 @@ function normalizeSlug(value: string) {
     .replace(/^\-|\-$/g, "")
 }
 
-async function ensureAdmin() {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 })
-  }
-  return null
-}
-
-export async function GET(_: Request, { params }: Ctx) {
-  const denied = await ensureAdmin()
+export async function GET(req: NextRequest, { params }: Ctx) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const { id } = await params
@@ -37,8 +29,8 @@ export async function GET(_: Request, { params }: Ctx) {
   return NextResponse.json(item)
 }
 
-export async function PATCH(req: Request, { params }: Ctx) {
-  const denied = await ensureAdmin()
+export async function PATCH(req: NextRequest, { params }: Ctx) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const { id } = await params
@@ -86,8 +78,8 @@ export async function PATCH(req: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_: Request, { params }: Ctx) {
-  const denied = await ensureAdmin()
+export async function DELETE(req: NextRequest, { params }: Ctx) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const { id } = await params
@@ -102,4 +94,3 @@ export async function DELETE(_: Request, { params }: Ctx) {
 
   return NextResponse.json({ ok: true })
 }
-

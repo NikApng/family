@@ -1,28 +1,20 @@
 import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import type { NextRequest } from "next/server"
 import { mkdir, writeFile } from "fs/promises"
 import path from "path"
 import crypto from "crypto"
 import { getUploadPublicUrl, getUploadsDir } from "@/lib/uploadsStorage"
+import { requireAdmin } from "@/lib/requireAdmin"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
-
-async function ensureAdmin() {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 })
-  }
-  return null
-}
 
 export async function GET() {
   return NextResponse.json({ ok: true })
 }
 
-export async function POST(req: Request) {
-  const denied = await ensureAdmin()
+export async function POST(req: NextRequest) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const formData = await req.formData().catch(() => null)

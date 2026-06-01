@@ -1,18 +1,10 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { eventSchema } from "@/lib/validators"
 import { normalizeImageUrl } from "@/lib/imageUrl"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-
-async function ensureAdmin() {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 })
-  }
-  return null
-}
+import { requireAdmin } from "@/lib/requireAdmin"
 
 export async function GET() {
   const items = await prisma.event.findMany({
@@ -22,8 +14,8 @@ export async function GET() {
   return NextResponse.json(items)
 }
 
-export async function POST(req: Request) {
-  const denied = await ensureAdmin()
+export async function POST(req: NextRequest) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const body = await req.json().catch(() => null)

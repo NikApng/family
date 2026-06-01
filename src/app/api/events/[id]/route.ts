@@ -1,22 +1,14 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { eventSchema } from "@/lib/validators"
 import { normalizeImageUrl } from "@/lib/imageUrl"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { requireAdmin } from "@/lib/requireAdmin"
 
 type Ctx = { params: Promise<{ id: string }> }
 
-async function ensureAdmin() {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 })
-  }
-  return null
-}
-
-export async function GET(_: Request, { params }: Ctx) {
+export async function GET(_: NextRequest, { params }: Ctx) {
   const { id } = await params
 
   const item = await prisma.event.findUnique({ where: { id } })
@@ -25,8 +17,8 @@ export async function GET(_: Request, { params }: Ctx) {
   return NextResponse.json(item)
 }
 
-export async function PATCH(req: Request, { params }: Ctx) {
-  const denied = await ensureAdmin()
+export async function PATCH(req: NextRequest, { params }: Ctx) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const { id } = await params
@@ -55,8 +47,8 @@ export async function PATCH(req: Request, { params }: Ctx) {
   return NextResponse.json(updated)
 }
 
-export async function DELETE(_: Request, { params }: Ctx) {
-  const denied = await ensureAdmin()
+export async function DELETE(req: NextRequest, { params }: Ctx) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const { id } = await params

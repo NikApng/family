@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 import { revalidatePath } from "next/cache"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { getToken } from "next-auth/jwt"
 import { prisma } from "@/lib/prisma"
 import { serviceSchema } from "@/lib/validators"
+import { requireAdmin } from "@/lib/requireAdmin"
 
 function normalizeSlug(value: string) {
   return String(value ?? "")
@@ -15,27 +16,19 @@ function normalizeSlug(value: string) {
     .replace(/^\-|\-$/g, "")
 }
 
-async function ensureAdmin() {
-  const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 })
-  }
-  return null
-}
-
-export async function GET() {
-  const session = await getServerSession(authOptions)
+export async function GET(req: NextRequest) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
 
   const items = await prisma.service.findMany({
-    where: session ? undefined : { isPublished: true },
+    where: token ? undefined : { isPublished: true },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
   })
 
   return NextResponse.json(items)
 }
 
-export async function POST(req: Request) {
-  const denied = await ensureAdmin()
+export async function POST(req: NextRequest) {
+  const denied = await requireAdmin(req)
   if (denied) return denied
 
   const body = await req.json().catch(() => null)
@@ -75,4 +68,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "CREATE_FAILED" }, { status: 500 })
   }
 }
-
