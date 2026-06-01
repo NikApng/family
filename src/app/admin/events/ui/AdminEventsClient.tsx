@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
 import UploadPhotoClient from "../../gallery/UploadPhotoClient"
+import RichEditor from "@/components/RichEditor"
 import { isValidImageUrl, normalizeImageUrl, safeImageSrc } from "@/lib/imageUrl"
 
 type EventItem = {
@@ -28,11 +29,12 @@ type FormState = {
 const fieldClass =
   "h-11 w-full rounded-md border border-indigo-100 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
 
-const textareaClass =
-  "w-full rounded-md border border-indigo-100 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200"
-
 function safeText(v: unknown) {
   return String(v ?? "").trim()
+}
+
+function isHtmlEmpty(html: string): boolean {
+  return html.replace(/<[^>]*>/g, "").trim().length === 0
 }
 
 async function apiJson<T>(input: RequestInfo, init?: RequestInit) {
@@ -68,6 +70,7 @@ export default function AdminEventsClient() {
     place: "",
     imageUrl: "",
   })
+  const [editorKey, setEditorKey] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -78,7 +81,7 @@ export default function AdminEventsClient() {
     const imageOk = !image || isValidImageUrl(image)
     return (
       safeText(form.title).length > 0 &&
-      safeText(form.description).length > 0 &&
+      !isHtmlEmpty(form.description) &&
       safeText(form.date).length > 0 &&
       imageOk
     )
@@ -113,7 +116,7 @@ export default function AdminEventsClient() {
         method: "POST",
         body: JSON.stringify({
           title: safeText(form.title),
-          description: safeText(form.description),
+          description: form.description,
           date: new Date(form.date).toISOString(),
           place: safeText(form.place),
           imageUrl: normalizeImageUrl(form.imageUrl),
@@ -121,6 +124,7 @@ export default function AdminEventsClient() {
       })
 
       setForm((p) => ({ ...p, title: "", description: "", imageUrl: "" }))
+      setEditorKey((k) => k + 1)
       await load()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Ошибка сохранения")
@@ -209,16 +213,16 @@ export default function AdminEventsClient() {
           <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-5">
             <div className="text-base font-semibold text-gray-900">2. Страница мероприятия</div>
             <div className="mt-1 text-sm text-gray-600">
-              Полное описание показывается после открытия карточки мероприятия.
+              Полное описание: текст, фото, видео — показывается после открытия карточки.
             </div>
 
             <div className="mt-4 grid gap-2">
               <div className="text-sm font-semibold text-gray-900">Описание</div>
-              <textarea
+              <RichEditor
+                key={editorKey}
                 value={form.description}
-                onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-                className={`${textareaClass} min-h-32`}
-                required
+                onChange={(html) => setForm((p) => ({ ...p, description: html }))}
+                placeholder="Расскажите о мероприятии: программа, спикеры, как попасть..."
               />
             </div>
           </div>
@@ -231,7 +235,7 @@ export default function AdminEventsClient() {
 
           {isValidImageUrl(form.imageUrl) ? (
             <div className="overflow-hidden rounded-2xl border border-indigo-100 bg-white">
-              <div className="relative aspect-[16/9]">
+              <div className="relative aspect-video">
                 <Image src={safeImageSrc(form.imageUrl, "/images/image.png")} alt="" fill className="object-cover" />
               </div>
             </div>
@@ -283,7 +287,6 @@ export default function AdminEventsClient() {
                           {new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(new Date(e.date))}
                           {e.place ? ` • ${e.place}` : ""}
                         </div>
-                        <div className="mt-2 text-sm text-gray-700 line-clamp-3">{e.description}</div>
                       </div>
                     </div>
 

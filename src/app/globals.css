@@ -214,6 +214,137 @@ body {
     --tw-gradient-to: rgb(var(--accent) / 0.7);
 }
 
+/* ── Rich text editor & public content ─────────────────── */
+
+/* ProseMirror editable area */
+.rich-editor-area .ProseMirror {
+    min-height: 8rem;
+    outline: none;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: rgb(var(--text) / 1);
+}
+
+/* Placeholder */
+.rich-editor-area .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: rgb(var(--muted) / 0.55);
+    pointer-events: none;
+    float: left;
+    height: 0;
+}
+
+/* Shared styles for editor area and public event page */
+.rich-editor-area .ProseMirror > * + *,
+.event-content > * + * {
+    margin-top: 0.6rem;
+}
+
+.rich-editor-area .ProseMirror h2,
+.event-content h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: rgb(var(--text) / 1);
+    margin-top: 1.25rem;
+}
+
+.rich-editor-area .ProseMirror h3,
+.event-content h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: rgb(var(--text) / 1);
+    margin-top: 1rem;
+}
+
+.rich-editor-area .ProseMirror ul,
+.event-content ul {
+    list-style: disc;
+    padding-left: 1.4rem;
+}
+
+.rich-editor-area .ProseMirror ol,
+.event-content ol {
+    list-style: decimal;
+    padding-left: 1.4rem;
+}
+
+.rich-editor-area .ProseMirror li + li,
+.event-content li + li {
+    margin-top: 0.2rem;
+}
+
+.rich-editor-area .ProseMirror strong,
+.event-content strong {
+    font-weight: 700;
+}
+
+.rich-editor-area .ProseMirror em,
+.event-content em {
+    font-style: italic;
+}
+
+.rich-editor-area .ProseMirror s,
+.event-content s {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.rich-editor-area .ProseMirror a,
+.event-content a {
+    color: rgb(var(--primary) / 1);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.rich-editor-area .ProseMirror blockquote,
+.event-content blockquote {
+    border-left: 3px solid rgb(var(--primary) / 0.4);
+    padding-left: 1rem;
+    color: rgb(var(--muted) / 1);
+    font-style: italic;
+    margin: 0.75rem 0;
+}
+
+/* Images in editor and public page */
+.rich-img,
+.event-content img {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    display: block;
+    margin: 0.75rem 0;
+}
+
+/* Video embeds: YouTube, Vimeo, RuTube, custom EmbedNode, direct video */
+.rich-video,
+.event-content [data-youtube-video],
+.event-content [data-embed] {
+    width: 100%;
+    margin: 0.75rem 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.rich-video iframe,
+.rich-video video,
+.event-content [data-youtube-video] iframe,
+.event-content [data-embed] iframe,
+.event-content [data-embed] video,
+.event-content iframe,
+.event-content video {
+    width: 100%;
+    aspect-ratio: 16/9;
+    height: auto;
+    border: none;
+    display: block;
+}
+
+/* event-content text sizes for public page */
+.event-content {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgb(var(--text) / 0.88);
+}
+
 .theme-toggle__icon {
     display: inline-flex;
 }

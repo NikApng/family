@@ -1,8 +1,19 @@
 import Link from "next/link"
+import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import { safeImageSrc } from "@/lib/imageUrl"
 
 export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "Афиша — Про Семью, Про Единство",
+  description: "Ближайшие события, семинары и встречи. История прошедших мероприятий центра психологической помощи семьям.",
+  openGraph: {
+    title: "Афиша",
+    description: "Ближайшие события и история прошедших мероприятий",
+    type: "website",
+  },
+}
 
 type Event = {
   id: string
@@ -36,6 +47,10 @@ function getStatusBadge(date: Date, now: Date): StatusBadge {
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(date)
+}
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
 }
 
 function groupByMonth(events: Event[]): [string, Event[]][] {
@@ -150,7 +165,7 @@ export default async function EventsPage() {
                         {formatDate(e.date)}{e.place ? ` · ${e.place}` : ""}
                       </div>
                       <div className="mt-1.5 font-semibold text-gray-900 line-clamp-2">{e.title}</div>
-                      <div className="mt-1 text-sm text-gray-600 line-clamp-2">{e.description}</div>
+                      <div className="mt-1 text-sm text-gray-600 line-clamp-2">{stripHtml(e.description)}</div>
                       <div className="mt-3 text-xs font-semibold text-indigo-600 transition group-hover:translate-x-0.5">
                         Открыть →
                       </div>
@@ -206,7 +221,7 @@ export default async function EventsPage() {
                           {formatDate(e.date)}{e.place ? ` · ${e.place}` : ""}
                         </div>
                         <div className="mt-1.5 font-semibold text-gray-700 line-clamp-2">{e.title}</div>
-                        <div className="mt-1 text-sm text-gray-500 line-clamp-2">{e.description}</div>
+                        <div className="mt-1 text-sm text-gray-500 line-clamp-2">{stripHtml(e.description)}</div>
                       </div>
                     </Link>
                   ))}

@@ -13,6 +13,13 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",
+    "@tiptap/extension-image": "^3.24.0",
+    "@tiptap/extension-link": "^3.24.0",
+    "@tiptap/extension-placeholder": "^3.24.0",
+    "@tiptap/extension-youtube": "^3.24.0",
+    "@tiptap/pm": "^3.24.0",
+    "@tiptap/react": "^3.24.0",
+    "@tiptap/starter-kit": "^3.24.0",
     "bcrypt": "^6.0.0",
     "next": "16.1.2",
     "next-auth": "^4.24.13",
