@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { serviceSchema } from "@/lib/validators"
@@ -12,29 +11,26 @@ function normalizeSlug(value: string) {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9\-]/g, "")
-    .replace(/\-+/g, "-")
-    .replace(/^\-|\-$/g, "")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
-export async function GET(req: NextRequest, { params }: Ctx) {
-  const denied = await requireAdmin(req)
+export async function GET(_: Request, { params }: Ctx) {
+  const denied = await requireAdmin()
   if (denied) return denied
 
   const { id } = await params
-
   const item = await prisma.service.findUnique({ where: { id } })
   if (!item) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 })
-
   return NextResponse.json(item)
 }
 
-export async function PATCH(req: NextRequest, { params }: Ctx) {
-  const denied = await requireAdmin(req)
+export async function PATCH(req: Request, { params }: Ctx) {
+  const denied = await requireAdmin()
   if (denied) return denied
 
   const { id } = await params
-
   const existing = await prisma.service.findUnique({ where: { id }, select: { slug: true } })
   if (!existing) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 })
 
@@ -48,10 +44,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
   if (!slug) return NextResponse.json({ ok: false, error: "INVALID_SLUG" }, { status: 400 })
 
   const blocks = (parsed.data.blocks ?? [])
-    .map((b) => ({
-      title: String(b.title ?? "").trim(),
-      text: String(b.text ?? "").trim(),
-    }))
+    .map((b) => ({ title: String(b.title ?? "").trim(), text: String(b.text ?? "").trim() }))
     .filter((b) => b.title || b.text)
 
   try {
@@ -70,7 +63,6 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     revalidatePath("/services")
     revalidatePath(`/services/${existing.slug}`)
     revalidatePath(`/services/${updated.slug}`)
-
     return NextResponse.json(updated)
   } catch (err) {
     console.error("Failed to update Service", err)
@@ -78,19 +70,16 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: Ctx) {
-  const denied = await requireAdmin(req)
+export async function DELETE(_: Request, { params }: Ctx) {
+  const denied = await requireAdmin()
   if (denied) return denied
 
   const { id } = await params
-
   const existing = await prisma.service.findUnique({ where: { id }, select: { slug: true } })
   if (!existing) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 })
 
   await prisma.service.delete({ where: { id } })
-
   revalidatePath("/services")
   revalidatePath(`/services/${existing.slug}`)
-
   return NextResponse.json({ ok: true })
 }

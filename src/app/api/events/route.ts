@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { eventSchema } from "@/lib/validators"
@@ -7,19 +6,15 @@ import { normalizeImageUrl } from "@/lib/imageUrl"
 import { requireAdmin } from "@/lib/requireAdmin"
 
 export async function GET() {
-  const items = await prisma.event.findMany({
-    orderBy: { date: "asc" },
-  })
-
+  const items = await prisma.event.findMany({ orderBy: { date: "asc" } })
   return NextResponse.json(items)
 }
 
-export async function POST(req: NextRequest) {
-  const denied = await requireAdmin(req)
+export async function POST(req: Request) {
+  const denied = await requireAdmin()
   if (denied) return denied
 
   const body = await req.json().catch(() => null)
-
   const parsed = eventSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ ok: false, error: "VALIDATION_ERROR" }, { status: 400 })
@@ -37,6 +32,5 @@ export async function POST(req: NextRequest) {
 
   revalidatePath("/")
   revalidatePath("/events")
-
   return NextResponse.json(created, { status: 201 })
 }

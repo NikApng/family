@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 import { mkdir, writeFile } from "fs/promises"
 import path from "path"
 import crypto from "crypto"
@@ -13,8 +12,8 @@ export async function GET() {
   return NextResponse.json({ ok: true })
 }
 
-export async function POST(req: NextRequest) {
-  const denied = await requireAdmin(req)
+export async function POST(req: Request) {
+  const denied = await requireAdmin()
   if (denied) return denied
 
   const formData = await req.formData().catch(() => null)

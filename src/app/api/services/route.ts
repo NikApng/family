@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 import { revalidatePath } from "next/cache"
-import { getToken } from "next-auth/jwt"
+import { cookies } from "next/headers"
+import { decode } from "next-auth/jwt"
 import { prisma } from "@/lib/prisma"
 import { serviceSchema } from "@/lib/validators"
 import { requireAdmin } from "@/lib/requireAdmin"
@@ -11,24 +11,36 @@ function normalizeSlug(value: string) {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9\-]/g, "")
-    .replace(/\-+/g, "-")
-    .replace(/^\-|\-$/g, "")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
 }
 
-export async function GET(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+async function isAdmin(): Promise<boolean> {
+  try {
+    const store = await cookies()
+    const secure = process.env.NEXTAUTH_URL?.startsWith("https://")
+    const name = secure ? "__Secure-next-auth.session-token" : "next-auth.session-token"
+    const raw = store.get(name)?.value
+    if (!raw) return false
+    const decoded = await decode({ token: raw, secret: process.env.NEXTAUTH_SECRET ?? "" })
+    return !!decoded
+  } catch {
+    return false
+  }
+}
 
+export async function GET() {
+  const admin = await isAdmin()
   const items = await prisma.service.findMany({
-    where: token ? undefined : { isPublished: true },
+    where: admin ? undefined : { isPublished: true },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
   })
-
   return NextResponse.json(items)
 }
 
-export async function POST(req: NextRequest) {
-  const denied = await requireAdmin(req)
+export async function POST(req: Request) {
+  const denied = await requireAdmin()
   if (denied) return denied
 
   const body = await req.json().catch(() => null)
@@ -41,10 +53,7 @@ export async function POST(req: NextRequest) {
   if (!slug) return NextResponse.json({ ok: false, error: "INVALID_SLUG" }, { status: 400 })
 
   const blocks = (parsed.data.blocks ?? [])
-    .map((b) => ({
-      title: String(b.title ?? "").trim(),
-      text: String(b.text ?? "").trim(),
-    }))
+    .map((b) => ({ title: String(b.title ?? "").trim(), text: String(b.text ?? "").trim() }))
     .filter((b) => b.title || b.text)
 
   try {
@@ -61,7 +70,6 @@ export async function POST(req: NextRequest) {
 
     revalidatePath("/services")
     revalidatePath(`/services/${created.slug}`)
-
     return NextResponse.json(created, { status: 201 })
   } catch (err) {
     console.error("Failed to create Service", err)
